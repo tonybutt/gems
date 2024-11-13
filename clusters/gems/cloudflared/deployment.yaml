@@ -24,7 +24,7 @@ spec:
         - --config
         - /etc/cloudflared/config/config.yaml
         - --origincert
-        - /etc/cloudflared
+        - /etc/cloudflared/certs/cert.pem
         - run
         livenessProbe:
           httpGet:
@@ -46,7 +46,7 @@ spec:
           mountPath: /etc/cloudflared/creds
           readOnly: true
         - name: cert
-          mountPath: /etc/cloudflared/cert.pem
+          mountPath: /etc/cloudflared/certs
           readOnly: true
       volumes:
       - name: cert
