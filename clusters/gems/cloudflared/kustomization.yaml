@@ -1,0 +1,10 @@
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+- name: cloudflared
+  files:
+  - config.yaml
+secretGenerator:
+- name: tunnel-credentials
+  files:
+  - tunnel-creds.json

@@ -40,7 +40,8 @@
           packages = with pkgs; [
             rage
             talosctl
-            timoni
+            helm
+            cloudflared
             flux
             sops
             pkgs.talhelper
