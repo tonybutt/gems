@@ -36,3 +36,10 @@ cat $HOME/.config/sops/age/keys.txt | kubectl create secret generic sops-age \
 --namespace=flux-system \
 --from-file=age.agekey=/dev/stdin
 ```
+
+### Bootstrap Cloudflared
+```sh
+cloudflared tunnel login
+cloudflared tunnel create test-tunnel
+cloudflared tunnel route dns test-tunnel test.abutt.dev
+```
