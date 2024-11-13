@@ -6,7 +6,7 @@ metrics: 0.0.0.0:2000
 no-autoupdate: true
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/ingress
 ingress:
-- hostname: tunnel.example.com
+- hostname: test.abutt.dev
   service: http://web-service:80
 - hostname: hello.example.com
   service: hello_world
