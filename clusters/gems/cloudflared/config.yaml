@@ -7,7 +7,7 @@ no-autoupdate: true
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/ingress
 ingress:
 - hostname: test.abutt.dev
-  service: http://web-service:80
+  service: web-service.default.svc.cluster.local:80
 - hostname: hello.abutt.dev
   service: hello_world
 # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
