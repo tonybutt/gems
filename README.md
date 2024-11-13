@@ -1,13 +1,16 @@
 ## Dependencies
 - Nix
 This project leverages a flake for dependencies and common commands.
-
+### Generate Talos Cluster configs
+```sh
+talhelper genconfig
+```
 ### Bootstrap CNI
 ```sh
 helm install \
     cilium \
     cilium/cilium \
-    --version 1.15.6 \
+    --version 1.16.3 \
     --namespace kube-system \
     --set ipam.mode=kubernetes \
     --set kubeProxyReplacement=true \
@@ -29,6 +32,10 @@ flux bootstrap github \
   --branch=main \
   --path=clusters/gems \
   --personal
+```
+
+```sh
+rage-keygen -o $HOME/.config/sops/age/keys.txt
 ```
 
 ```sh
