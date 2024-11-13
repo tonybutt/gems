@@ -23,6 +23,8 @@ spec:
         # below.
         - --config
         - /etc/cloudflared/config/config.yaml
+        - --origincert
+        - /etc/cloudflared/cert.pem
         - run
         livenessProbe:
           httpGet:
