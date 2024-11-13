@@ -1,3 +1,4 @@
+namespace: cloudflared
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
