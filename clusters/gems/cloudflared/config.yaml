@@ -8,7 +8,7 @@ no-autoupdate: true
 ingress:
 - hostname: test.abutt.dev
   service: http://web-service:80
-- hostname: hello.example.com
+- hostname: hello.abutt.dev
   service: hello_world
 # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
 - service: http_status:404
