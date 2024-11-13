@@ -21,5 +21,12 @@ helm install \
 
 ### Bootstrap Flux
 ```sh
-flux bootstrap
+export GITHUB_TOKEN=<token>
+flux bootstrap github \
+  --token-auth \
+  --owner=tonybutt \
+  --repository=gems \
+  --branch=main \
+  --path=clusters/gems \
+  --personal
 ```
