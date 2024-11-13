@@ -2,6 +2,7 @@ namespace: cloudflared
 
 resources:
 - ns.yaml
+- deployment.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
