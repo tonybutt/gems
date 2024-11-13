@@ -1,4 +1,8 @@
 namespace: cloudflared
+
+resources:
+- ns.yaml
+
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
