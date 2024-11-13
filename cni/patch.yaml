@@ -1,0 +1,10 @@
+machine:
+  install:
+    extraKernelArgs:
+      - net.ifnames=0
+cluster:
+  proxy:
+    disabled: true
+  network:
+    cni:
+      name: none
