@@ -30,3 +30,9 @@ flux bootstrap github \
   --path=clusters/gems \
   --personal
 ```
+
+```sh
+cat $HOME/.config/sops/age/keys.txt | kubectl create secret generic sops-age \
+--namespace=flux-system \
+--from-file=age.agekey=/dev/stdin
+```
