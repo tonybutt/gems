@@ -27,6 +27,8 @@ spec:
   values:
     ipam:
       mode: kubernetes
+    gatewayAPI:
+      enabled: true
     kubeProxyReplacement: true
     securityContext:
       capabilities:
