@@ -40,7 +40,6 @@
           packages = with pkgs; [
             rage
             talosctl
-            helm
             cloudflared
             flux
             sops
