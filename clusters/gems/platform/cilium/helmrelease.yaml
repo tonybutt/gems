@@ -29,6 +29,8 @@ spec:
       mode: kubernetes
     gatewayAPI:
       enabled: true
+    l2announcements:
+      enabled: true
     kubeProxyReplacement: true
     securityContext:
       capabilities:
