@@ -51,4 +51,4 @@ spec:
         enabled: false
       hostRoot: /sys/fs/cgroup
     k8sServiceHost: localhost
-    k8sServicePort: 74
+    k8sServicePort: 7445
