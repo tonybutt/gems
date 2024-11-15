@@ -6,7 +6,7 @@ metrics: 0.0.0.0:2000
 no-autoupdate: true
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/ingress
 ingress:
-- hostname: test.abutt.dev
+- hostname: '*.abutt.dev'
   service: http://cilium-gateway-my-gateway.default.svc.cluster.local:80
 - hostname: hello.abutt.dev
   service: hello_world
