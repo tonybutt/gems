@@ -53,7 +53,7 @@
             };
           in
           {
-            packages = [ pkgs.talosctl pkgs.kubernetes-helm ];
+            packages = [ pkgs.talosctl pkgs.kubernetes-helm pkgs.cloudflared ];
 
             scripts = {
               menu = {
