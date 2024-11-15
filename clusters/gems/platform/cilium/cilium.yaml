@@ -2415,6 +2415,15 @@ spec:
           affinity:
       ttlSecondsAfterFinished: 1800
 ---
+# Source: cilium/templates/cilium-gateway-api-class.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: cilium
+spec:
+  controllerName: io.cilium/gateway-controller
+  description: The default Cilium GatewayClass
+---
 # Source: cilium/templates/hubble/tls-cronjob/job.yaml
 apiVersion: batch/v1
 kind: Job

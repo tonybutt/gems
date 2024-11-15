@@ -2,6 +2,8 @@ ipam:
   mode: kubernetes
 gatewayAPI:
   enabled: true
+  gatewayClass:
+    create: 'true'
 l2announcements:
   enabled: true
 kubeProxyReplacement: true
