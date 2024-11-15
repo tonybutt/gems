@@ -1,14 +1,12 @@
----
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumL2AnnouncementPolicy
 metadata:
-  name: default-policy
+  name: policy1
 spec:
-  serviceSelector:
-    matchLabels:
-      io.cilium.gateway/owning-gateway: my-gateway
   nodeSelector:
     matchExpressions:
-      - key: node-role.kubernetes.io/control-plane
-        operator: DoesNotExist
+      - { key: somekey, operator: NotIn, values: ["will-match-and-announce-all-services"]}
+  interfaces:
+  - ^eth[0-9]+ # <-- my interfaces are eth0, you'll need to update this to work with you interface names. 
+  externalIPs: true
   loadBalancerIPs: true
