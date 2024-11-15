@@ -6,8 +6,8 @@ resources:
 - git-receiver.yaml
 - httproute.yaml
 - webhook-receiver-svc.yaml
-secretGenerator:
-- name: webhook-token
-  disableSuffixHash: true
-  envs:
-  - .env.secret
+# secretGenerator:
+# - name: webhook-token
+#   disableSuffixHash: true
+#   envs:
+#   - .env.secret
