@@ -3,3 +3,10 @@ kind: Kustomization
 resources:
 - gotk-components.yaml
 - gotk-sync.yaml
+- git-receiver.yaml
+- httproute.yaml
+- webhook-receiver-svc.yaml
+secretGenerator:
+- name: webhook-token
+  envs:
+  - .env.secret

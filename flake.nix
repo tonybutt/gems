@@ -1,5 +1,5 @@
 {
-  description = "Flake for gwctl";
+  description = "Flake for gems";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
@@ -61,9 +61,7 @@
                 description = "Show the menu of commands";
               };
               dashboard = {
-                exec = ''
-                  talosctl -n 192.168.86.250 dashboard
-                '';
+                exec = ''talosctl -n 192.168.86.250 dashboard'';
                 package = pkgs.talosctl;
                 description = "Cluster Dashboard";
               };
