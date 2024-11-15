@@ -1,3 +1,4 @@
 resources:
-- helmrepo.yaml
-- helmrelease.yaml
+- cilium.yaml
+- ippool.yaml
+- l2announcements.yaml
