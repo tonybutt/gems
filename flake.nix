@@ -37,7 +37,7 @@
                 OUTPUT_FILE="./clusters/gems/platform/cilium/cilium.yaml"
                 TEMP_FILE=$(mktemp)
 
-                ${pkgs.kubernetes-helm}/bin/helm template cilium cilium/cilium --version 1.16.3 -f "$VALUES_FILE" > "$TEMP_FILE"
+                ${pkgs.kubernetes-helm}/bin/helm template cilium cilium/cilium --namespace kube-system --version 1.16.3 -f "$VALUES_FILE" > "$TEMP_FILE"
 
                 if cmp -s "$TEMP_FILE" "$OUTPUT_FILE"; then
                     echo "No changes in Kubernetes manifests."
