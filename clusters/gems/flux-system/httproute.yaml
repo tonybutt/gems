@@ -12,6 +12,6 @@ spec:
   rules:
   - backendRefs:
     - kind: Service
-      name: webhook-receiver
+      name: receiver
       namespace: flux-system
       port: 9292
