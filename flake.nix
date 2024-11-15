@@ -77,9 +77,9 @@
               nixpkgs-fmt.enable = true;
               generate-cilium-manifests = {
                 enable = true;
-                files = "helm-values.yaml";
+                files = "helm-values\.yaml$";
                 entry = "${template-helm}/bin/generate-helm-manifests";
-                pass_filenames = false;
+                pass_filenames = true;
               };
             };
 
