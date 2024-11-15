@@ -1,4 +1,4 @@
 resources:
 - cilium.yaml
 - ippool.yaml
-- l2announcements.yaml
+- l2announcementpolicy.yaml
