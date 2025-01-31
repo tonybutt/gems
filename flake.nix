@@ -61,8 +61,7 @@
                 description = "Show the menu of commands";
               };
               dashboard = {
-                exec = ''talosctl -n 192.168.86.250 dashboard'';
-                package = pkgs.talosctl;
+                exec = ''${pkgs.talosctl}/bin/talosctl -n 192.168.86.250 dashboard'';
                 description = "Cluster Dashboard";
               };
               generate-cilium-manifests = {
