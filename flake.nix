@@ -30,30 +30,17 @@
             '';
             template-helm = pkgs.writeShellApplication {
               name = "generate-helm-manifests";
-              text = ''
-                set -e
-
-                VALUES_FILE="./clusters/gems/platform/cilium/helm-values.yaml"
-                OUTPUT_FILE="./clusters/gems/platform/cilium/cilium.yaml"
-                TEMP_FILE=$(mktemp)
-
-                ${pkgs.kubernetes-helm}/bin/helm template cilium cilium/cilium --namespace kube-system --version 1.16.3 -f "$VALUES_FILE" > "$TEMP_FILE"
-
-                if cmp -s "$TEMP_FILE" "$OUTPUT_FILE"; then
-                    echo "No changes in Kubernetes manifests."
-                else
-                    echo "Updating Kubernetes manifests."
-                    mv "$TEMP_FILE" "$OUTPUT_FILE"
-                fi
-
-                [ -f "$TEMP_FILE" ] && rm "$TEMP_FILE"
-
-                exit 0
-              '';
+              runtimeInputs = with pkgs; [ kubernetes-helm ];
+              text = builtins.readFile ./scripts/generate-cilium-manifests.sh;
+            };
+            bootstrap-gems = pkgs.writeShellApplication {
+              name = "bootstrap-gems";
+              runtimeInputs = with pkgs; [ talosctl kubectl kustomize sops ];
+              text = builtins.readFile ./scripts/bootstrap-gems.sh;
             };
           in
           {
-            packages = with pkgs; [ talosctl kubernetes-helm cloudflared ];
+            packages = with pkgs; [ talosctl kubernetes-helm cloudflared kubectl kustomize sops ];
 
             scripts = {
               menu = {
@@ -67,6 +54,14 @@
               generate-cilium-manifests = {
                 exec = ''${template-helm}/bin/generate-helm-manifests'';
                 description = "Generates Cilium manifests from helm chart";
+              };
+              bootstrap-gems = {
+                exec = ''${bootstrap-gems}/bin/bootstrap-gems'';
+                description = "Bootstraps the gems cluster";
+              };
+              kubeconfig = {
+                exec = ''${pkgs.talosctl}/bin/talosctl kubeconfig -n 192.168.86.250 -e 192.168.86.250 --context gems --talosconfig=./clusters/gems/infra/talosconfig'';
+                description = "Get kubeconfig for the gems cluster";
               };
             };
 

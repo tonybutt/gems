@@ -1,13 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- gotk-components.yaml
-- gotk-sync.yaml
-- git-receiver.yaml
-- httproute.yaml
-- webhook-receiver-svc.yaml
-# secretGenerator:
-# - name: webhook-token
-#   disableSuffixHash: true
-#   envs:
-#   - .env.secret
+  - gotk-components.yaml
+  - gotk-sync.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+secretGenerator:
+  - name: sops-age
+    files:
+      - age.agekey
