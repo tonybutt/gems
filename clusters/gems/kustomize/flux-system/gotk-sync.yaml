@@ -12,9 +12,7 @@ spec:
   url: https://github.com/tonybutt/gems.git
   ignore: |
     /*
-    !./clusters/gems/platform
-    !./clusters/gems/cloudflared
-    !./clusters/gems/flux-system
+    !./clusters/gems/kustomize
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
