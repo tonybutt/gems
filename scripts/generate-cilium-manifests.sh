@@ -1,5 +1,5 @@
-VALUES_FILE="./clusters/gems/platform/cilium/helm-values.yaml"
-OUTPUT_FILE="./clusters/gems/platform/cilium/cilium.yaml"
+VALUES_FILE="./clusters/gems/kustomize/platform/cilium/helm-values.yaml"
+OUTPUT_FILE="./clusters/gems/kustomize/platform/cilium/cilium.yaml"
 TEMP_FILE=$(mktemp)
 
 helm template cilium cilium/cilium --namespace kube-system --version 1.16.3 -f "$VALUES_FILE" > "$TEMP_FILE"
