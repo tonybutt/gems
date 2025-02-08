@@ -24,16 +24,16 @@ talosctl bootstrap -n 192.168.86.250 -e 192.168.86.250 --talosconfig="$GEMS_DIR/
 set -e
 # Apply Cilium
 echo "Applying Cilium"
-kustomize build "$GEMS_DIR/platform" | kubectl apply -f -
+kustomize build "$GEMS_DIR/kustomize/platform" | kubectl apply -f -
 
 # Apply Flux
 echo "Applying Flux"
-secret_file="$GEMS_DIR/flux-system/age.agekey"
+secret_file="$GEMS_DIR/kustomize/flux-system/age.agekey"
 
 set +e
 sops -d -i $secret_file
 cat $secret_file | kubectl create secret generic sops-age --namespace=flux-system --from-file=age.agekey=/dev/stdin
-kustomize build "$GEMS_DIR/flux-system" | kubectl apply -f -
+kustomize build "$GEMS_DIR/kustomize/flux-system" | kubectl apply -f -
 sops -e -i $secret_file
 set -e
 
