@@ -23,7 +23,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./clusters/gems
+  path: ./clusters/gems/kustomize
   prune: true
   decryption:
     provider: sops
