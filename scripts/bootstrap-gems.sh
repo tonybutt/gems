@@ -2,25 +2,25 @@ GEMS_DIR=clusters/gems
 
 # Generate Talos config for Gem Master Control Plane Node
 echo "Generating Talos config for Gem Master Control Plane Node"
-sops -d -i "$GEMS_DIR/infra/secrets.yaml"
+sops -d -i "infrastructure/secrets.yaml"
 talosctl gen config gems https://192.168.86.250:6443 \
-    --with-secrets "$GEMS_DIR/infra/secrets.yaml" \
-    --config-patch "@$GEMS_DIR/infra/nodes/gem-master-0.yaml" \
-    -o "$GEMS_DIR/infra" \
+    --with-secrets "infrastructure/secrets.yaml" \
+    --config-patch "@infrastructure/nodes/gem-master-0.yaml,@infrastructure/nodes/base-patches.yaml" \
+    -o "infrastructure" \
     --force
-sops -e -i "$GEMS_DIR/infra/secrets.yaml"
+sops -e -i "infrastructure/secrets.yaml"
 
 # Apply Talos config
 echo "Applying generated Talos config"
 set +e  # Prevent script from exiting on error
-if ! talosctl apply-config -n 192.168.86.250 --file "$GEMS_DIR/infra/controlplane.yaml" --insecure; then
+if ! talosctl apply-config -n 192.168.86.250 --file "infrastructure/controlplane.yaml" --insecure; then
     echo "First attempt failed, trying with talosconfig..."
-    talosctl apply-config -n 192.168.86.250 --file "$GEMS_DIR/infra/controlplane.yaml" --talosconfig="$GEMS_DIR/infra/talosconfig"
+    talosctl apply-config -n 192.168.86.250 --file "infrastructure/controlplane.yaml" --talosconfig="$GEMS_DIR/infrastructure/talosconfig"
 fi
 
 # Send bootstrap command
 echo "Sending bootstrap command"
-talosctl bootstrap -n 192.168.86.250 -e 192.168.86.250 --talosconfig="$GEMS_DIR/infra/talosconfig"
+talosctl bootstrap -n 192.168.86.250 -e 192.168.86.250 --talosconfig="infrastructure/talosconfig"
 set -e
 # Apply Cilium
 echo "Applying Cilium"
