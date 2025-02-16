@@ -19,6 +19,51 @@
       perSystem = { pkgs, lib, config, system, ... }: {
         devenv.shells.default =
           let
+            nodes = [
+              {
+                name = "gem-worker-1";
+                ip = "192.168.86.33";
+              }
+              {
+                name = "gem-master-2";
+                ip = "192.168.86.31";
+              }
+              {
+                name = "gem-master-0";
+                ip = "192.168.86.250";
+              }
+              {
+                name = "gem-master-1";
+                ip = "192.168.86.21";
+              }
+              {
+                name = "gem-worker-0";
+                ip = "192.168.86.25";
+              }
+            ];
+            upgrade-scripts = builtins.listToAttrs (map
+              (node: {
+                name = "upgrade-${node.name}";
+                value = {
+                  exec = ''${pkgs.talosctl}/bin/talosctl upgrade --image "ghcr.io/siderolabs/installer:v$1" -n ${node.ip}'';
+                  description = "Upgrade ${node.name} <command> <version> (e.g. upgrade-${node.name} 1.9.3)";
+                };
+              })
+              nodes);
+            apply-config-scripts = builtins.listToAttrs (map
+              (node:
+                let
+                  nodeType = if lib.strings.hasInfix "master" node.name then "controlplane" else "worker";
+                  nodeDir = "infrastructure/nodes";
+                in
+                {
+                  name = "apply-${node.name}";
+                  value = {
+                    exec = ''${pkgs.talosctl}/bin/talosctl apply-config -n ${node.ip} --file infrastructure/${nodeType}.yaml -p @${nodeDir}/${node.name}.yaml -p @${nodeDir}/base-patches.yaml'';
+                    description = "Apply config for ${node.name}";
+                  };
+                })
+              nodes);
             menu = ''
               echo
               echo 🦾 Command Menu:
@@ -40,16 +85,13 @@
             };
           in
           {
+            env.TALOSCONFIG = "infrastructure/talosconfig";
             packages = with pkgs; [ talosctl kubernetes-helm cloudflared kubectl kustomize sops ];
 
-            scripts = {
+            scripts = upgrade-scripts // apply-config-scripts // {
               menu = {
                 exec = menu;
                 description = "Show the menu of commands";
-              };
-              dashboard = {
-                exec = ''${pkgs.talosctl}/bin/talosctl -n 192.168.86.250 dashboard'';
-                description = "Cluster Dashboard";
               };
               generate-cilium-manifests = {
                 exec = ''${template-helm}/bin/generate-helm-manifests'';

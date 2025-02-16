@@ -1,0 +1,3 @@
+machine:
+  network:
+    hostname: gem-master-2
