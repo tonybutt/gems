@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Generate Talos configurations from Nix definitions
-set -euo pipefail
+set -euox pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 TALOS_DIR="$REPO_ROOT/talos"
@@ -115,22 +115,10 @@ generate_configs() {
   echo "Decrypting secrets..."
   sops -d -i "$SECRETS_FILE"
 
-  # Build patch args for first control plane node
-  FIRST_CP=""
-  PATCH_ARGS=""
-  for node in "${NODES[@]}"; do
-    IFS=':' read -r name _ip type <<< "$node"
-    if [ "$type" = "controlplane" ] && [ -z "$FIRST_CP" ]; then
-      FIRST_CP="$name"
-      PATCH_ARGS="@$NODES_DIR/$name.yaml,@$PATCHES_DIR/base.yaml"
-      break
-    fi
-  done
-
-  # Generate configs
+  # Generate configs with base patch only (node patches applied at apply-config time)
   talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
     --with-secrets "$SECRETS_FILE" \
-    --config-patch "$PATCH_ARGS" \
+    --config-patch "@$PATCHES_DIR/base.yaml" \
     -o "$TALOS_DIR" \
     --force
 
