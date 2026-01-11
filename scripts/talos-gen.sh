@@ -26,10 +26,10 @@ usage() {
 generate_patches() {
   echo "Generating patches from Nix definitions..."
 
-  mkdir -p "$PATCHES_DIR"
+  mkdir -p "$PATCHES_DIR" "$NODES_DIR"
 
-  # Generate base patch
-  cat > "$PATCHES_DIR/base.yaml" << 'EOF'
+  # Base patch - applies to all nodes
+  cat > "$PATCHES_DIR/base.yaml" << EOF
 machine:
   kubelet:
     image: ghcr.io/siderolabs/kubelet:v${KUBERNETES_VERSION}
@@ -38,6 +38,11 @@ machine:
     extraKernelArgs:
       - net.ifnames=0
     disk: ${INSTALL_DISK}
+EOF
+  echo "  Created $PATCHES_DIR/base.yaml"
+
+  # Controlplane patch - applies to all control plane nodes
+  cat > "$PATCHES_DIR/controlplane.yaml" << EOF
 cluster:
   apiServer:
     image: registry.k8s.io/kube-apiserver:v${KUBERNETES_VERSION}
@@ -52,23 +57,23 @@ cluster:
     disabled: true
   allowSchedulingOnControlPlanes: true
 EOF
+  echo "  Created $PATCHES_DIR/controlplane.yaml"
 
-  # Substitute variables
-  sed -i "s/\${KUBERNETES_VERSION}/$KUBERNETES_VERSION/g" "$PATCHES_DIR/base.yaml"
-  sed -i "s/\${TALOS_VERSION}/$TALOS_VERSION/g" "$PATCHES_DIR/base.yaml"
-  sed -i "s|\${INSTALL_DISK}|$INSTALL_DISK|g" "$PATCHES_DIR/base.yaml"
+  # Worker patch - applies to all worker nodes
+  cat > "$PATCHES_DIR/worker.yaml" << EOF
+# Worker-specific configuration
+EOF
+  echo "  Created $PATCHES_DIR/worker.yaml"
 
-  echo "  Created $PATCHES_DIR/base.yaml"
-
-  # Generate per-node patches
+  # Per-node patches (hostname)
   for node in "${NODES[@]}"; do
     IFS=':' read -r name _ip _type <<< "$node"
-    cat > "$PATCHES_DIR/$name.yaml" << EOF
+    cat > "$NODES_DIR/$name.yaml" << EOF
 machine:
   network:
     hostname: $name
 EOF
-    echo "  Created $PATCHES_DIR/$name.yaml"
+    echo "  Created $NODES_DIR/$name.yaml"
   done
 
   echo "Patches generated successfully."
@@ -125,7 +130,8 @@ generate_configs() {
     talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
       --with-secrets "$SECRETS_FILE" \
       --config-patch "@$PATCHES_DIR/base.yaml" \
-      --config-patch "@$PATCHES_DIR/$name.yaml" \
+      --config-patch "@$PATCHES_DIR/$type.yaml" \
+      --config-patch "@$NODES_DIR/$name.yaml" \
       --output-types "$type" \
       -o "$NODES_DIR/$name.yaml" \
       --force
