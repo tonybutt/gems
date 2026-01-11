@@ -127,7 +127,7 @@ fi
 
 echo ""
 echo "Next steps:"
-echo "  1. Flash ISO to USB: dd if=$ISO_FILE of=/dev/sdX bs=4M status=progress"
+echo "  1. Flash ISO to USB: sudo dd if=$ISO_FILE of=/dev/sdX bs=4M status=progress conv=fsync"
 echo "  2. Boot target machine from USB"
 echo "  3. Run: talos-gen secrets && talos-gen configs"
 echo "  4. Apply config: apply-gem-master-0"
