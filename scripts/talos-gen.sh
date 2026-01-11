@@ -38,18 +38,7 @@ machine:
     extraKernelArgs:
       - net.ifnames=0
     disk: ${INSTALL_DISK}
-EOF
-  echo "  Created $PATCHES_DIR/base.yaml"
-
-  # Controlplane patch - applies to all control plane nodes
-  cat > "$PATCHES_DIR/controlplane.yaml" << EOF
 cluster:
-  apiServer:
-    image: registry.k8s.io/kube-apiserver:v${KUBERNETES_VERSION}
-  controllerManager:
-    image: registry.k8s.io/kube-controller-manager:v${KUBERNETES_VERSION}
-  scheduler:
-    image: registry.k8s.io/kube-scheduler:v${KUBERNETES_VERSION}
   network:
     cni:
       name: none
@@ -57,13 +46,7 @@ cluster:
     disabled: true
   allowSchedulingOnControlPlanes: true
 EOF
-  echo "  Created $PATCHES_DIR/controlplane.yaml"
-
-  # Worker patch - applies to all worker nodes
-  cat > "$PATCHES_DIR/worker.yaml" << EOF
-# Worker-specific configuration
-EOF
-  echo "  Created $PATCHES_DIR/worker.yaml"
+  echo "  Created $PATCHES_DIR/base.yaml"
 
   # Per-node patches (hostname)
   for node in "${NODES[@]}"; do
@@ -130,7 +113,6 @@ generate_configs() {
     talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
       --with-secrets "$SECRETS_FILE" \
       --config-patch "@$PATCHES_DIR/base.yaml" \
-      --config-patch "@$PATCHES_DIR/$type.yaml" \
       --config-patch "@$NODES_DIR/$name.yaml" \
       --output-types "$type" \
       -o "$NODES_DIR/$name.yaml" \

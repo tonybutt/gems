@@ -7,7 +7,7 @@
   };
 
   versions = {
-    talos = "1.9.3";
+    talos = "1.12.1";
     kubernetes = "1.32.0";
   };
 
