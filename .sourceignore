@@ -1,0 +1,7 @@
+# Flux source ignore
+# Include only what Flux needs to sync
+
+/*
+!/clusters
+!/infrastructure
+!/apps

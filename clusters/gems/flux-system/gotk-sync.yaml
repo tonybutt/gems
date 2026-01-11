@@ -8,11 +8,6 @@ spec:
   ref:
     branch: main
   url: https://github.com/tonybutt/gems.git
-  ignore: |
-    /*
-    !/clusters
-    !/infrastructure
-    !/apps
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
