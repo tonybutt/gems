@@ -12,6 +12,7 @@ usage() {
   echo ""
   echo "Options:"
   echo "  -v, --version <ver>  Talos version (default: from nix/nodes.nix)"
+  echo "  -l, --latest         Use latest Talos version from GitHub"
   echo "  -o, --output <dir>   Output directory (default: talos/iso)"
   echo "  -h, --help           Show this help"
   echo ""
@@ -20,16 +21,33 @@ usage() {
   echo ""
   echo "Example:"
   echo "  talos-iso                    # Download ISO for current version"
+  echo "  talos-iso --latest           # Download latest version"
   echo "  talos-iso -v 1.9.3           # Download specific version"
 }
 
+get_latest_version() {
+  local latest
+  latest=$(curl -s https://api.github.com/repos/siderolabs/talos/releases/latest | jq -r '.tag_name')
+  if [ -z "$latest" ] || [ "$latest" = "null" ]; then
+    echo "Error: Failed to fetch latest Talos version" >&2
+    exit 1
+  fi
+  # Remove 'v' prefix if present
+  echo "${latest#v}"
+}
+
 OUTPUT_DIR="$ISO_DIR"
+USE_LATEST=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     -v|--version)
       TALOS_VERSION="$2"
       shift 2
+      ;;
+    -l|--latest)
+      USE_LATEST=true
+      shift
       ;;
     -o|--output)
       OUTPUT_DIR="$2"
@@ -46,6 +64,13 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Fetch latest version if requested
+if [ "$USE_LATEST" = true ]; then
+  echo "Fetching latest Talos version..."
+  TALOS_VERSION=$(get_latest_version)
+  echo "Latest version: v${TALOS_VERSION}"
+fi
 
 # Create schematic for Image Factory
 # See: https://factory.talos.dev/
