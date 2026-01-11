@@ -1,3 +1,16 @@
+keys:
+  # abutt - converted from ssh-ed25519 via ssh-to-age
+  - &abutt age1kah6uk67hrf2g0805ralt05v83ry9ay4pf8h66mm0wlaq3zsdqqsk66myg
 creation_rules:
-  - age: >-
-      age1vtn8kmgsy4l0u8pf336zy2ksxd6y5xqgxk2hzxja2dc0as6e6adqje32fd
+  - path_regex: talos/secrets\.yaml$
+    key_groups:
+      - age:
+          - *abutt
+  - path_regex: .*\.encrypted\.yaml$
+    key_groups:
+      - age:
+          - *abutt
+  - path_regex: .*\.encrypted\.env$
+    key_groups:
+      - age:
+          - *abutt
