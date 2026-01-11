@@ -6,6 +6,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 TALOS_DIR="$REPO_ROOT/talos"
 NODES_DIR="$TALOS_DIR/nodes"
 PATCHES_DIR="$TALOS_DIR/patches"
+GEN_DIR="$TALOS_DIR/gen"
 
 usage() {
   echo "Usage: talos-gen <command>"
@@ -13,13 +14,13 @@ usage() {
   echo "Commands:"
   echo "  patches     Generate node and base patches from Nix definitions"
   echo "  secrets     Generate new cluster secrets (creates talos/secrets.yaml)"
-  echo "  configs     Generate per-node configs (talos/nodes/<node>.yaml)"
+  echo "  configs     Generate per-node configs (talos/gen/<node>.yaml)"
   echo "  all         Run patches, then configs (requires existing secrets)"
   echo ""
   echo "Examples:"
   echo "  talos-gen patches    # Regenerate patches from nix/nodes.nix"
   echo "  talos-gen secrets    # Create new encrypted secrets file"
-  echo "  talos-gen configs    # Generate node configs using existing secrets"
+  echo "  talos-gen configs    # Generate node configs to talos/gen/"
 }
 
 # Generate patches from Nix
@@ -103,7 +104,7 @@ generate_configs() {
   echo "Decrypting secrets..."
   sops -d -i "$SECRETS_FILE"
 
-  mkdir -p "$NODES_DIR"
+  mkdir -p "$GEN_DIR"
 
   # Generate per-node configs with all patches baked in
   for node in "${NODES[@]}"; do
@@ -115,7 +116,7 @@ generate_configs() {
       --config-patch "@$PATCHES_DIR/base.yaml" \
       --config-patch "@$NODES_DIR/$name.yaml" \
       --output-types "$type" \
-      -o "$NODES_DIR/$name.yaml" \
+      -o "$GEN_DIR/$name.yaml" \
       --force
   done
 
@@ -124,7 +125,7 @@ generate_configs() {
   talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
     --with-secrets "$SECRETS_FILE" \
     --output-types talosconfig \
-    -o "$TALOS_DIR/talosconfig" \
+    -o "$GEN_DIR/talosconfig" \
     --force
 
   # Re-encrypt secrets
@@ -135,9 +136,9 @@ generate_configs() {
   echo "Configs generated:"
   for node in "${NODES[@]}"; do
     IFS=':' read -r name _ip _type <<< "$node"
-    echo "  $NODES_DIR/$name.yaml"
+    echo "  $GEN_DIR/$name.yaml"
   done
-  echo "  $TALOS_DIR/talosconfig"
+  echo "  $GEN_DIR/talosconfig"
 }
 
 # Main

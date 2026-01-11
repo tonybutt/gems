@@ -24,14 +24,14 @@ let
   ) nodeConfig.nodes;
 
   # Generate apply-config scripts for each node
-  # All patches are baked into node configs by talos-gen configs
+  # All patches are baked into generated configs by talos-gen configs
   applyScripts = map (
     node:
     pkgs.writeShellScriptBin "apply-${node.name}" ''
       set -euo pipefail
       ${pkgs.talosctl}/bin/talosctl apply-config \
         -n ${node.ip} \
-        --file talos/nodes/${node.name}.yaml
+        --file talos/gen/${node.name}.yaml
     ''
   ) nodeConfig.nodes;
 
@@ -68,7 +68,7 @@ let
       -n ${nodeConfig.cluster.controlPlaneEndpoint} \
       -e ${nodeConfig.cluster.controlPlaneEndpoint} \
       --context ${nodeConfig.cluster.name} \
-      --talosconfig=./talos/talosconfig
+      --talosconfig=./talos/gen/talosconfig
   '';
 
 in
@@ -107,7 +107,7 @@ pkgs.mkShell {
     ++ applyScripts;
 
   env = {
-    TALOSCONFIG = "talos/talosconfig";
+    TALOSCONFIG = "talos/gen/talosconfig";
   };
 
   shellHook = ''
