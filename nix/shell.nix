@@ -10,7 +10,7 @@ let
       set -euo pipefail
       if [ -z "''${1:-}" ]; then
         echo "Usage: upgrade-${node.name} <version>"
-        echo "Example: upgrade-${node.name} 1.9.3"
+        echo "Example: upgrade-${node.name} ${nodeConfig.versions.talos}"
         exit 1
       fi
       ${pkgs.talosctl}/bin/talosctl upgrade --image "ghcr.io/siderolabs/installer:v$1" -n ${node.ip}
@@ -32,7 +32,7 @@ let
   # Menu script
   showMenu = pkgs.writeShellScriptBin "menu" ''
     echo ""
-    echo "  Gems Homelab Cluster"
+    echo "  Gems Homelab Cluster (Talos ${nodeConfig.versions.talos} / K8s ${nodeConfig.versions.kubernetes})"
     echo ""
     echo "  Node commands:"
     echo "    upgrade-<node> <version>  Upgrade Talos on node"
@@ -40,21 +40,26 @@ let
     echo ""
     echo "  Nodes: ${builtins.concatStringsSep ", " (map (n: n.name) nodeConfig.nodes)}"
     echo ""
+    echo "  Talos generation:"
+    echo "    talos-gen patches         Generate patches from Nix"
+    echo "    talos-gen secrets         Generate new cluster secrets"
+    echo "    talos-gen configs         Generate talosctl configs"
+    echo ""
     echo "  Tools:"
-    echo "    render-helm [--all] [files...]  Render helm charts"
-    echo "    sops-reencrypt [dir]            Re-encrypt SOPS files"
-    echo "    bootstrap-gems                  Bootstrap cluster"
-    echo "    kubeconfig                      Get kubeconfig"
+    echo "    render-helm [--all]       Render helm charts"
+    echo "    sops-reencrypt            Re-encrypt SOPS files"
+    echo "    bootstrap-gems            Bootstrap cluster"
+    echo "    kubeconfig                Get kubeconfig"
     echo ""
     echo "  Formatting:"
-    echo "    nix fmt                         Format all files"
+    echo "    nix fmt                   Format all files"
     echo ""
   '';
 
   kubeconfig = pkgs.writeShellScriptBin "kubeconfig" ''
     ${pkgs.talosctl}/bin/talosctl kubeconfig \
-      -n ${nodeConfig.cluster.endpoint} \
-      -e ${nodeConfig.cluster.endpoint} \
+      -n ${nodeConfig.cluster.controlPlaneEndpoint} \
+      -e ${nodeConfig.cluster.controlPlaneEndpoint} \
       --context ${nodeConfig.cluster.name} \
       --talosconfig=./talos/talosconfig
   '';
@@ -82,6 +87,7 @@ pkgs.mkShell {
     packages.render-helm
     packages.sops-reencrypt
     packages.bootstrap-gems
+    packages.talos-gen
 
     # Node scripts
     showMenu

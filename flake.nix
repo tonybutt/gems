@@ -30,7 +30,7 @@
       formatter.${system} = treefmt.config.build.wrapper;
 
       packages.${system} = {
-        inherit (packages) render-helm sops-reencrypt bootstrap-gems menu;
+        inherit (packages) render-helm sops-reencrypt bootstrap-gems menu talos-gen;
         default = packages.render-helm;
       };
 
