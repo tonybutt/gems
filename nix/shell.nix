@@ -24,16 +24,14 @@ let
   ) nodeConfig.nodes;
 
   # Generate apply-config scripts for each node
-  # Base patch is baked into controlplane.yaml/worker.yaml by talos-gen configs
-  # Only node-specific patches (hostname) applied here
+  # All patches are baked into node configs by talos-gen configs
   applyScripts = map (
     node:
     pkgs.writeShellScriptBin "apply-${node.name}" ''
       set -euo pipefail
       ${pkgs.talosctl}/bin/talosctl apply-config \
         -n ${node.ip} \
-        --file talos/${node.type}.yaml \
-        -p @talos/nodes/${node.name}.yaml
+        --file talos/nodes/${node.name}.yaml
     ''
   ) nodeConfig.nodes;
 

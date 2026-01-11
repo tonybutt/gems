@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Generate Talos configurations from Nix definitions
-set -euox pipefail
+set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 TALOS_DIR="$REPO_ROOT/talos"
@@ -13,22 +13,22 @@ usage() {
   echo "Commands:"
   echo "  patches     Generate node and base patches from Nix definitions"
   echo "  secrets     Generate new cluster secrets (creates talos/secrets.yaml)"
-  echo "  configs     Generate full talosctl configs (controlplane.yaml, worker.yaml)"
+  echo "  configs     Generate per-node configs (talos/nodes/<node>.yaml)"
   echo "  all         Run patches, then configs (requires existing secrets)"
   echo ""
   echo "Examples:"
   echo "  talos-gen patches    # Regenerate patches from nix/nodes.nix"
   echo "  talos-gen secrets    # Create new encrypted secrets file"
-  echo "  talos-gen configs    # Generate configs using existing secrets"
+  echo "  talos-gen configs    # Generate node configs using existing secrets"
 }
 
-# Generate node patches from Nix
+# Generate patches from Nix
 generate_patches() {
   echo "Generating patches from Nix definitions..."
 
-  mkdir -p "$NODES_DIR" "$PATCHES_DIR"
+  mkdir -p "$PATCHES_DIR"
 
-  # Generate base patches
+  # Generate base patch
   cat > "$PATCHES_DIR/base.yaml" << 'EOF'
 machine:
   kubelet:
@@ -63,12 +63,12 @@ EOF
   # Generate per-node patches
   for node in "${NODES[@]}"; do
     IFS=':' read -r name _ip _type <<< "$node"
-    cat > "$NODES_DIR/$name.yaml" << EOF
+    cat > "$PATCHES_DIR/$name.yaml" << EOF
 machine:
   network:
     hostname: $name
 EOF
-    echo "  Created $NODES_DIR/$name.yaml"
+    echo "  Created $PATCHES_DIR/$name.yaml"
   done
 
   echo "Patches generated successfully."
@@ -115,20 +115,40 @@ generate_configs() {
   echo "Decrypting secrets..."
   sops -d -i "$SECRETS_FILE"
 
-  # Generate configs with base patch only (node patches applied at apply-config time)
+  mkdir -p "$NODES_DIR"
+
+  # Generate per-node configs with all patches baked in
+  for node in "${NODES[@]}"; do
+    IFS=':' read -r name _ip type <<< "$node"
+
+    echo "Generating config for $name ($type)..."
+    talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
+      --with-secrets "$SECRETS_FILE" \
+      --config-patch "@$PATCHES_DIR/base.yaml" \
+      --config-patch "@$PATCHES_DIR/$name.yaml" \
+      --output-types "$type" \
+      -o "$NODES_DIR/$name.yaml" \
+      --force
+  done
+
+  # Generate talosconfig
+  echo "Generating talosconfig..."
   talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
     --with-secrets "$SECRETS_FILE" \
-    --config-patch "@$PATCHES_DIR/base.yaml" \
-    -o "$TALOS_DIR" \
+    --output-types talosconfig \
+    -o "$TALOS_DIR/talosconfig" \
     --force
 
   # Re-encrypt secrets
   echo "Re-encrypting secrets..."
   sops -e -i "$SECRETS_FILE"
 
+  echo ""
   echo "Configs generated:"
-  echo "  $TALOS_DIR/controlplane.yaml"
-  echo "  $TALOS_DIR/worker.yaml"
+  for node in "${NODES[@]}"; do
+    IFS=':' read -r name _ip _type <<< "$node"
+    echo "  $NODES_DIR/$name.yaml"
+  done
   echo "  $TALOS_DIR/talosconfig"
 }
 
