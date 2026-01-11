@@ -1,31 +1,43 @@
 ## Dependencies
+
 - Nix
-This project leverages a flake for dependencies and common commands.
+  This project leverages a flake for dependencies and common commands.
+
 ### Bootstrap
+
 ```shell
   bootstrap-gems
 ```
 
 ### Applying Infrastructure Configurations
+
 I keep the configuration for the cluster ephermal by leveraging talos's strategic merge patches.
-*Base Patches* are applied to all nodes in the cluster.
-*Node Specific Patches* are applied to a specific node in the cluster.
+_Base Patches_ are applied to all nodes in the cluster.
+_Node Specific Patches_ are applied to a specific node in the cluster.
 All patches for nodes are in the [infrastructure nodes](./infrastructure/nodes) directory.
+
 ```shell
   apply-<node name>
 ```
+
 This command will apply the configuration for the specified node with the base patches and the node specific patches. This command is crafted declaratively from the flake configuration by configuring the nodes attribute set.
 
 ### Upgrading the Cluster
-*Talos OS*
+
+_Talos OS_
+
 ```shell
   upgrade-<node name> <talos version>
 ```
-*Kubernetes*
+
+_Kubernetes_
+
 ```shell
   talosctl -n <controlplane node> upgrade-k8s --to <k8s version> --dry-run
 ```
+
 When upgrading you have to update the machine configuration patches to the versions you are upgrading to.
+
 ```yaml
 machine:
   install:

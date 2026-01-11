@@ -1,124 +1,102 @@
 {
-  description = "Flake for gems";
+  description = "Gems homelab cluster";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs-lib.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
-    devenv.url = "github:cachix/devenv";
+
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, flake-parts, devenv, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [
-        devenv.flakeModule
-      ];
-      systems = [ "x86_64-linux" "aarch64-darwin" ];
-      perSystem = { pkgs, lib, config, system, ... }: {
-        devenv.shells.default =
-          let
-            nodes = [
-              {
-                name = "gem-worker-1";
-                ip = "192.168.86.33";
-              }
-              {
-                name = "gem-master-2";
-                ip = "192.168.86.31";
-              }
-              {
-                name = "gem-master-0";
-                ip = "192.168.86.250";
-              }
-              {
-                name = "gem-master-1";
-                ip = "192.168.86.21";
-              }
-              {
-                name = "gem-worker-0";
-                ip = "192.168.86.25";
-              }
-            ];
-            upgrade-scripts = builtins.listToAttrs (map
-              (node: {
-                name = "upgrade-${node.name}";
-                value = {
-                  exec = ''${pkgs.talosctl}/bin/talosctl upgrade --image "ghcr.io/siderolabs/installer:v$1" -n ${node.ip}'';
-                  description = "Upgrade ${node.name} <command> <version> (e.g. upgrade-${node.name} 1.9.3)";
-                };
-              })
-              nodes);
-            apply-config-scripts = builtins.listToAttrs (map
-              (node:
-                let
-                  nodeType = if lib.strings.hasInfix "master" node.name then "controlplane" else "worker";
-                  nodeDir = "infrastructure/nodes";
-                in
-                {
-                  name = "apply-${node.name}";
-                  value = {
-                    exec = ''${pkgs.talosctl}/bin/talosctl apply-config -n ${node.ip} --file infrastructure/${nodeType}.yaml -p @${nodeDir}/${node.name}.yaml -p @${nodeDir}/base-patches.yaml'';
-                    description = "Apply config for ${node.name}";
-                  };
-                })
-              nodes);
-            menu = ''
-              echo
-              echo 🦾 Command Menu:
-              echo 🦾
-              ${pkgs.gnused}/bin/sed -e 's| |••|g' -e 's|=| |' <<EOF | ${pkgs.util-linuxMinimal}/bin/column -t | ${pkgs.gnused}/bin/sed -e 's|^|🦾 |' -e 's|••| |g'
-              ${lib.generators.toKeyValue {} (lib.mapAttrs (name: value: value.description) config.devenv.shells.default.scripts)}
-              EOF
-              echo
-            '';
-            template-helm = pkgs.writeShellApplication {
-              name = "generate-helm-manifests";
-              runtimeInputs = with pkgs; [ kubernetes-helm ];
-              text = builtins.readFile ./scripts/generate-cilium-manifests.sh;
-            };
-            bootstrap-gems = pkgs.writeShellApplication {
-              name = "bootstrap-gems";
-              runtimeInputs = with pkgs; [ talosctl kubectl kustomize sops ];
-              text = builtins.readFile ./scripts/bootstrap-gems.sh;
-            };
-          in
-          {
-            env.TALOSCONFIG = "infrastructure/talosconfig";
-            packages = with pkgs; [ talosctl kubernetes-helm cloudflared kubectl kustomize sops ];
+  outputs = { self, nixpkgs, treefmt-nix, git-hooks }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
 
-            scripts = upgrade-scripts // apply-config-scripts // {
-              menu = {
-                exec = menu;
-                description = "Show the menu of commands";
-              };
-              generate-cilium-manifests = {
-                exec = ''${template-helm}/bin/generate-helm-manifests'';
-                description = "Generates Cilium manifests from helm chart";
-              };
-              bootstrap-gems = {
-                exec = ''${bootstrap-gems}/bin/bootstrap-gems'';
-                description = "Bootstraps the gems cluster";
-              };
-              kubeconfig = {
-                exec = ''${pkgs.talosctl}/bin/talosctl kubeconfig -n 192.168.86.250 -e 192.168.86.250 --context gems --talosconfig=./clusters/gems/infra/talosconfig'';
-                description = "Get kubeconfig for the gems cluster";
-              };
-            };
+      # Import custom packages
+      packages = import ./nix/packages.nix { inherit pkgs; };
 
-            git-hooks.hooks = {
-              nixpkgs-fmt.enable = true;
-              generate-cilium-manifests = {
-                enable = true;
-                files = "helm-values\.yaml$";
-                entry = "${template-helm}/bin/generate-helm-manifests";
-                pass_filenames = true;
-              };
-            };
+      # Import node definitions
+      nodes = import ./nix/nodes.nix;
 
-            enterShell = menu;
+      # Treefmt configuration
+      treefmtEval = treefmt-nix.lib.evalModule pkgs {
+        projectRootFile = "flake.nix";
+
+        settings.global.excludes = [
+          # Rendered helm manifests
+          "**/manifests/*.yaml"
+          "**/cilium.yaml"
+          "**/gotk-components.yaml"
+          # SOPS encrypted files
+          "**/secrets.yaml"
+          "**/*.encrypted.*"
+          # Credentials
+          "**/credentials.json"
+        ];
+
+        programs = {
+          nixpkgs-fmt.enable = true;
+          yamlfmt = {
+            enable = true;
+            excludes = [ "*.json" ];
           };
+          prettier = {
+            enable = true;
+            includes = [ "*.md" "*.json" ];
+            excludes = [ "**/credentials.json" ];
+          };
+        };
+      };
+
+      # Git hooks configuration
+      gitHooksModule = git-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          treefmt = {
+            enable = true;
+            package = treefmtEval.config.build.wrapper;
+            entry = "${treefmtEval.config.build.wrapper}/bin/treefmt --fail-on-change";
+          };
+          render-helm = {
+            enable = true;
+            name = "render-helm";
+            entry = "${packages.render-helm}/bin/render-helm";
+            files = "helm-values\\.yaml$";
+            pass_filenames = true;
+          };
+          commitizen.enable = true;
+        };
+      };
+
+    in
+    {
+      # Formatter for `nix fmt`
+      formatter.${system} = treefmtEval.config.build.wrapper;
+
+      # Packages for `nix run .#<name>`
+      packages.${system} = {
+        inherit (packages) render-helm sops-reencrypt bootstrap-gems menu;
+        default = packages.render-helm;
+      };
+
+      # Dev shell for `nix develop`
+      devShells.${system}.default = import ./nix/shell.nix {
+        inherit pkgs packages nodes;
+        git-hooks = gitHooksModule;
+      };
+
+      # For CI checks
+      checks.${system} = {
+        formatting = treefmtEval.config.build.check self;
+        pre-commit = gitHooksModule;
       };
     };
 }

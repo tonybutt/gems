@@ -32,3 +32,6 @@ go.work.sum
 
 # Nix builds
 result
+
+# Claude Code
+.claude/

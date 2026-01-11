@@ -1,21 +1,17 @@
 namespace: cloudflared
-
 resources:
-- ns.yaml
-- deployment.yaml
-
+  - ns.yaml
+  - deployment.yaml
 generatorOptions:
   disableNameSuffixHash: true
-
 configMapGenerator:
-- name: cloudflared
-  files:
-  - config.yaml
-
+  - name: cloudflared
+    files:
+      - config.yaml
 secretGenerator:
-- name: tunnel-credentials
-  files:
-  - credentials.json
-- name: tunnel-origin-cert
-  files:
-  - cert.pem
+  - name: tunnel-credentials
+    files:
+      - credentials.json
+  - name: tunnel-origin-cert
+    files:
+      - cert.pem

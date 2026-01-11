@@ -1,3 +1,8 @@
+# chart: cilium/cilium
+# version: 1.16.3
+# repo: https://helm.cilium.io/
+# namespace: kube-system
+# release-name: cilium
 ipam:
   mode: kubernetes
 gatewayAPI:
