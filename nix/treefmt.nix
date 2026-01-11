@@ -17,14 +17,15 @@ treefmt-nix.lib.evalModule pkgs {
   ];
 
   programs = {
-    nixpkgs-fmt.enable = true;
-    yamlfmt = {
-      enable = true;
-      excludes = [ "*.json" ];
-    };
+    nixfmt.enable = true;
     prettier = {
       enable = true;
-      includes = [ "*.md" "*.json" ];
+      includes = [
+        "*.md"
+        "*.json"
+        "*.yaml"
+        "*.yml"
+      ];
       excludes = [ "**/credentials.json" ];
     };
   };

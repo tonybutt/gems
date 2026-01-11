@@ -5,8 +5,12 @@ metadata:
 spec:
   nodeSelector:
     matchExpressions:
-      - {key: somekey, operator: NotIn, values: ["will-match-and-announce-all-services"]}
+      - {
+          key: somekey,
+          operator: NotIn,
+          values: ["will-match-and-announce-all-services"],
+        }
   interfaces:
-    - ^eth[0-9]+ # <-- my interfaces are eth0, you'll need to update this to work with you interface names. 
+    - ^eth[0-9]+ # <-- my interfaces are eth0, you'll need to update this to work with you interface names.
   externalIPs: true
   loadBalancerIPs: true

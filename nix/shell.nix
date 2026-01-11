@@ -1,12 +1,18 @@
 # Development shell configuration
-{ pkgs, packages, nodes, git-hooks }:
+{
+  pkgs,
+  packages,
+  nodes,
+  git-hooks,
+}:
 
 let
   nodeConfig = import ./nodes.nix;
 
   # Generate upgrade scripts for each node
-  upgradeScripts = map
-    (node: pkgs.writeShellScriptBin "upgrade-${node.name}" ''
+  upgradeScripts = map (
+    node:
+    pkgs.writeShellScriptBin "upgrade-${node.name}" ''
       set -euo pipefail
       if [ -z "''${1:-}" ]; then
         echo "Usage: upgrade-${node.name} <version>"
@@ -14,20 +20,21 @@ let
         exit 1
       fi
       ${pkgs.talosctl}/bin/talosctl upgrade --image "ghcr.io/siderolabs/installer:v$1" -n ${node.ip}
-    '')
-    nodeConfig.nodes;
+    ''
+  ) nodeConfig.nodes;
 
   # Generate apply-config scripts for each node
-  applyScripts = map
-    (node: pkgs.writeShellScriptBin "apply-${node.name}" ''
+  applyScripts = map (
+    node:
+    pkgs.writeShellScriptBin "apply-${node.name}" ''
       set -euo pipefail
       ${pkgs.talosctl}/bin/talosctl apply-config \
         -n ${node.ip} \
         --file talos/${node.type}.yaml \
         -p @talos/nodes/${node.name}.yaml \
         -p @talos/patches/base.yaml
-    '')
-    nodeConfig.nodes;
+    ''
+  ) nodeConfig.nodes;
 
   # Menu script
   showMenu = pkgs.writeShellScriptBin "menu" ''
@@ -40,7 +47,8 @@ let
     echo ""
     echo "  Nodes: ${builtins.concatStringsSep ", " (map (n: n.name) nodeConfig.nodes)}"
     echo ""
-    echo "  Talos generation:"
+    echo "  Talos setup:"
+    echo "    talos-iso                 Download ISO with iSCSI extensions"
     echo "    talos-gen patches         Generate patches from Nix"
     echo "    talos-gen secrets         Generate new cluster secrets"
     echo "    talos-gen configs         Generate talosctl configs"
@@ -68,31 +76,36 @@ in
 pkgs.mkShell {
   name = "gems-shell";
 
-  packages = with pkgs; [
-    # Kubernetes/Talos tools
-    talosctl
-    kubectl
-    kubernetes-helm
-    kustomize
-    fluxcd
+  packages =
+    with pkgs;
+    [
+      # Kubernetes/Talos tools
+      talosctl
+      kubectl
+      kubernetes-helm
+      kustomize
+      fluxcd
 
-    # Secrets
-    sops
-    age
+      # Secrets
+      sops
+      age
 
-    # Cloudflare
-    cloudflared
+      # Cloudflare
+      cloudflared
 
-    # Custom packages
-    packages.render-helm
-    packages.sops-reencrypt
-    packages.bootstrap-gems
-    packages.talos-gen
+      # Custom packages
+      packages.render-helm
+      packages.sops-reencrypt
+      packages.bootstrap-gems
+      packages.talos-gen
+      packages.talos-iso
 
-    # Node scripts
-    showMenu
-    kubeconfig
-  ] ++ upgradeScripts ++ applyScripts;
+      # Node scripts
+      showMenu
+      kubeconfig
+    ]
+    ++ upgradeScripts
+    ++ applyScripts;
 
   env = {
     TALOSCONFIG = "talos/talosconfig";

@@ -1,5 +1,10 @@
 # Git hooks configuration
-{ system, git-hooks, treefmt, packages }:
+{
+  system,
+  git-hooks,
+  treefmt,
+  packages,
+}:
 
 git-hooks.lib.${system}.run {
   src = ../.;

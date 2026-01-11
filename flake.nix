@@ -15,7 +15,13 @@
     };
   };
 
-  outputs = { self, nixpkgs, treefmt-nix, git-hooks }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      treefmt-nix,
+      git-hooks,
+    }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -23,14 +29,28 @@
       packages = import ./nix/packages.nix { inherit pkgs; };
       nodes = import ./nix/nodes.nix;
       treefmt = import ./nix/treefmt.nix { inherit pkgs treefmt-nix; };
-      pre-commit = import ./nix/pre-commit.nix { inherit system git-hooks packages treefmt; };
+      pre-commit = import ./nix/pre-commit.nix {
+        inherit
+          system
+          git-hooks
+          packages
+          treefmt
+          ;
+      };
 
     in
     {
       formatter.${system} = treefmt.config.build.wrapper;
 
       packages.${system} = {
-        inherit (packages) render-helm sops-reencrypt bootstrap-gems menu talos-gen;
+        inherit (packages)
+          render-helm
+          sops-reencrypt
+          bootstrap-gems
+          menu
+          talos-gen
+          talos-iso
+          ;
         default = packages.render-helm;
       };
 
