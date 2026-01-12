@@ -19,7 +19,11 @@ let
         echo "Example: upgrade-${node.name} ${nodeConfig.versions.talos}"
         exit 1
       fi
-      ${pkgs.talosctl}/bin/talosctl upgrade --image "ghcr.io/siderolabs/installer:v$1" -n ${node.ip}
+      REPO_ROOT="$(git rev-parse --show-toplevel)"
+      ${pkgs.talosctl}/bin/talosctl upgrade \
+        --talosconfig "$REPO_ROOT/talos/gen/talosconfig" \
+        --image "ghcr.io/siderolabs/installer:v$1" \
+        -n ${node.ip}
     ''
   ) nodeConfig.nodes;
 
@@ -29,9 +33,11 @@ let
     node:
     pkgs.writeShellScriptBin "apply-${node.name}" ''
       set -euo pipefail
+      REPO_ROOT="$(git rev-parse --show-toplevel)"
       ${pkgs.talosctl}/bin/talosctl apply-config \
+        --talosconfig "$REPO_ROOT/talos/gen/talosconfig" \
         -n ${node.ip} \
-        --file talos/gen/${node.name}.yaml
+        --file "$REPO_ROOT/talos/gen/${node.name}.yaml"
     ''
   ) nodeConfig.nodes;
 
@@ -64,11 +70,12 @@ let
   '';
 
   kubeconfig = pkgs.writeShellScriptBin "kubeconfig" ''
+    REPO_ROOT="$(git rev-parse --show-toplevel)"
     ${pkgs.talosctl}/bin/talosctl kubeconfig \
+      --talosconfig "$REPO_ROOT/talos/gen/talosconfig" \
       -n ${nodeConfig.cluster.controlPlaneEndpoint} \
       -e ${nodeConfig.cluster.controlPlaneEndpoint} \
-      --context ${nodeConfig.cluster.name} \
-      --talosconfig=./talos/gen/talosconfig
+      --context ${nodeConfig.cluster.name}
   '';
 
 in
