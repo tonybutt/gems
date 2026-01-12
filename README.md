@@ -90,6 +90,9 @@ apply-gem-worker-1
 ### 6. Install Flux
 
 ```bash
+# Create SOPS age secret for Flux decryption
+kubectl create ns flux-system && sops -d clusters/gems/flux-system/age.agekey | kubectl create secret generic sops-age -n flux-system --from-file=age.agekey=/dev/stdin
+
 # Apply Flux to take over GitOps management
 kubectl apply -k clusters/gems/flux-system/
 ```
