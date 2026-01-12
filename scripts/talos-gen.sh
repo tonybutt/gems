@@ -85,6 +85,17 @@ generate_configs() {
     -o "$GEN_DIR/talosconfig" \
     --force
 
+  # Add endpoints to talosconfig (control plane IPs)
+  echo "Adding endpoints to talosconfig..."
+  ENDPOINTS=()
+  for node in "${NODES[@]}"; do
+    IFS=':' read -r _name ip type <<< "$node"
+    if [ "$type" = "controlplane" ]; then
+      ENDPOINTS+=("$ip")
+    fi
+  done
+  talosctl config endpoint --talosconfig "$GEN_DIR/talosconfig" "${ENDPOINTS[@]}"
+
   # Re-encrypt secrets
   echo "Re-encrypting secrets..."
   sops -e -i "$SECRETS_FILE"
