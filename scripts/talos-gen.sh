@@ -68,10 +68,19 @@ generate_configs() {
     IFS=':' read -r name _ip type <<< "$node"
 
     echo "Generating config for $name ($type)..."
+
+    # Build patch args - controlplane nodes get extra patches
+    PATCH_ARGS=(
+      --config-patch "@$PATCHES_DIR/base.yaml"
+      --config-patch "@$NODES_DIR/$name.yaml"
+    )
+    if [ "$type" = "controlplane" ]; then
+      PATCH_ARGS+=(--config-patch "@$PATCHES_DIR/controlplane.yaml")
+    fi
+
     talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
       --with-secrets "$SECRETS_FILE" \
-      --config-patch "@$PATCHES_DIR/base.yaml" \
-      --config-patch "@$NODES_DIR/$name.yaml" \
+      "${PATCH_ARGS[@]}" \
       --output-types "$type" \
       -o "$GEN_DIR/$name.yaml" \
       --force
