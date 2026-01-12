@@ -1,3 +1,4 @@
-machine:
-  network:
-    hostname: gem-master-1
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: gem-master-1

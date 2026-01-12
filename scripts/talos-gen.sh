@@ -12,51 +12,12 @@ usage() {
   echo "Usage: talos-gen <command>"
   echo ""
   echo "Commands:"
-  echo "  patches     Generate node and base patches from Nix definitions"
   echo "  secrets     Generate new cluster secrets (creates talos/secrets.yaml)"
   echo "  configs     Generate per-node configs (talos/gen/<node>.yaml)"
-  echo "  all         Run patches, then configs (requires existing secrets)"
   echo ""
   echo "Examples:"
-  echo "  talos-gen patches    # Regenerate patches from nix/nodes.nix"
   echo "  talos-gen secrets    # Create new encrypted secrets file"
   echo "  talos-gen configs    # Generate node configs to talos/gen/"
-}
-
-# Generate patches from Nix
-generate_patches() {
-  echo "Generating patches from Nix definitions..."
-
-  mkdir -p "$PATCHES_DIR" "$NODES_DIR"
-
-  # Base patch - applies to all nodes
-  cat > "$PATCHES_DIR/base.yaml" << EOF
-machine:
-  install:
-    disk: ${INSTALL_DISK}
-cluster:
-  network:
-    cni:
-      name: none
-  proxy:
-    disabled: true
-  allowSchedulingOnControlPlanes: true
-EOF
-  echo "  Created $PATCHES_DIR/base.yaml"
-
-  # Per-node patches (hostname via HostnameConfig for Talos 1.12+)
-  for node in "${NODES[@]}"; do
-    IFS=':' read -r name _ip _type <<< "$node"
-    cat > "$NODES_DIR/$name.yaml" << EOF
-apiVersion: v1alpha1
-kind: HostnameConfig
-auto: off
-hostname: $name
-EOF
-    echo "  Created $NODES_DIR/$name.yaml"
-  done
-
-  echo "Patches generated successfully."
 }
 
 # Generate new secrets
@@ -146,17 +107,10 @@ fi
 COMMAND="$1"
 
 case "$COMMAND" in
-  patches)
-    generate_patches
-    ;;
   secrets)
     generate_secrets
     ;;
   configs)
-    generate_configs
-    ;;
-  all)
-    generate_patches
     generate_configs
     ;;
   -h|--help)

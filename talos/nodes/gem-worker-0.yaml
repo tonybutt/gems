@@ -1,3 +1,4 @@
-machine:
-  network:
-    hostname: gem-worker-0
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: gem-worker-0
