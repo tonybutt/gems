@@ -8,10 +8,3 @@ configMapGenerator:
   - name: cloudflared
     files:
       - config.yaml
-secretGenerator:
-  - name: tunnel-credentials
-    files:
-      - credentials.json
-  - name: tunnel-origin-cert
-    files:
-      - cert.pem
