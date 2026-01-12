@@ -11,8 +11,6 @@ let
     # Injected from nix/nodes.nix
     CLUSTER_NAME="${nodes.cluster.name}"
     CLUSTER_ENDPOINT="${nodes.cluster.endpoint}"
-    TALOS_VERSION="${nodes.versions.talos}"
-    KUBERNETES_VERSION="${nodes.versions.kubernetes}"
     INSTALL_DISK="${nodes.machineConfig.install.disk}"
     NODES=(${nodesArray})
 

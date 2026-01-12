@@ -32,12 +32,7 @@ generate_patches() {
   # Base patch - applies to all nodes
   cat > "$PATCHES_DIR/base.yaml" << EOF
 machine:
-  kubelet:
-    image: ghcr.io/siderolabs/kubelet:v${KUBERNETES_VERSION}
   install:
-    image: ghcr.io/siderolabs/installer:v${TALOS_VERSION}
-    extraKernelArgs:
-      - net.ifnames=0
     disk: ${INSTALL_DISK}
 cluster:
   network:
@@ -49,13 +44,14 @@ cluster:
 EOF
   echo "  Created $PATCHES_DIR/base.yaml"
 
-  # Per-node patches (hostname)
+  # Per-node patches (hostname via HostnameConfig for Talos 1.12+)
   for node in "${NODES[@]}"; do
     IFS=':' read -r name _ip _type <<< "$node"
     cat > "$NODES_DIR/$name.yaml" << EOF
-machine:
-  network:
-    hostname: $name
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: $name
 EOF
     echo "  Created $NODES_DIR/$name.yaml"
   done
