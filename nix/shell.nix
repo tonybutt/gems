@@ -28,14 +28,20 @@ let
 
   # Generate apply-config scripts for each node
   # All patches are baked into generated configs by talos-gen configs
+  # Use --insecure flag for first apply (before certs are set)
   applyScripts = map (
     node:
     pkgs.writeShellScriptBin "apply-${node.name}" ''
       set -euo pipefail
+      INSECURE=""
+      if [ "''${1:-}" = "--insecure" ] || [ "''${1:-}" = "-i" ]; then
+        INSECURE="--insecure"
+      fi
       ${pkgs.talosctl}/bin/talosctl apply-config \
         --talosconfig talos/gen/talosconfig \
         -n ${node.ip} \
-        --file talos/gen/${node.name}.yaml
+        --file talos/gen/${node.name}.yaml \
+        $INSECURE
     ''
   ) nodeConfig.nodes;
 
@@ -46,7 +52,7 @@ let
     echo ""
     echo "  Node commands:"
     echo "    upgrade-<node> <version>  Upgrade Talos on node"
-    echo "    apply-<node>              Apply config to node"
+    echo "    apply-<node> [--insecure] Apply config to node (-i for first apply)"
     echo ""
     echo "  Nodes: ${builtins.concatStringsSep ", " (map (n: n.name) nodeConfig.nodes)}"
     echo ""
