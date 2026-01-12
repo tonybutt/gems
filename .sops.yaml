@@ -1,6 +1,6 @@
 keys:
-  - &tiberius age1kah6uk67hrf2g0805ralt05v83ry9ay4pf8h66mm0wlaq3zsdqqsk66myg
-  - &gems-cluster age1njzp4xzqpwsd663un724eg3rh96pquu8mw5x3n7cmthxkle4937sca7pc0
+  - &tiberius ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICnQDGTR3J244BlVZ3u0I9l476XRxlv0DdmREzTku3Ib abutt@tiberius.com
+  - &gems-cluster age1r3aas35hvsswx2q04f2w7asg5373wvdydr4lufgdptjfq4hms9yq3au5rx
 creation_rules:
   - path_regex: clusters/gems/flux-system/age\.agekey$
     key_groups:
@@ -10,7 +10,6 @@ creation_rules:
     key_groups:
       - age:
           - *tiberius
-          - *gems-cluster
   - path_regex: .*\.encrypted\.yaml$
     key_groups:
       - age:
