@@ -4,9 +4,3 @@ namespace: flux-system
 resources:
   - gotk-components.yaml
   - gotk-sync.yaml
-generatorOptions:
-  disableNameSuffixHash: true
-secretGenerator:
-  - name: sops-age
-    files:
-      - age.agekey
