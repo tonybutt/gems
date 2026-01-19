@@ -13,7 +13,7 @@ configMapGenerator:
 secretGenerator:
   - name: tunnel-origin-cert
     files:
-      - secrets/cert.encrypted.pem
+      - cert.pem=secrets/cert.encrypted.pem
   - name: tunnel-credentials
     files:
-      - secrets/228fd238-cb69-4336-82bf-f6e628dcdbda.encrypted.json
+      - credentials.json=secrets/228fd238-cb69-4336-82bf-f6e628dcdbda.encrypted.json
