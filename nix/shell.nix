@@ -111,6 +111,9 @@ pkgs.mkShell {
       # Node scripts
       showMenu
       kubeconfig
+
+      # Github
+      gh
     ]
     ++ upgradeScripts
     ++ applyScripts;

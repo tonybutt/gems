@@ -4,3 +4,4 @@ resources:
   - manifests/cilium.yaml
   - ippool.yaml
   - l2announcementpolicy.yaml
+  - gateway.yaml
