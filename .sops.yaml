@@ -20,3 +20,13 @@ creation_rules:
       - age:
           - *tiberius
           - *gems-cluster
+  - path_regex: .*\.encrypted\.json$
+    key_groups:
+      - age:
+          - *tiberius
+          - *gems-cluster
+  - path_regex: .*\.encrypted\.pem$
+    key_groups:
+      - age:
+          - *tiberius
+          - *gems-cluster
