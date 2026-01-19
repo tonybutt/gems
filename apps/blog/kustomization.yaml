@@ -10,5 +10,3 @@ resources:
   - imageupdateautomation.yaml
   - secrets/blog-deploy-key.encrypted.yaml
   - secrets/ghcr-pull-secret.encrypted.yaml
-patches:
-  - path: patches/blog-deployment.yaml
