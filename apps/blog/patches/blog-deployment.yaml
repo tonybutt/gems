@@ -1,0 +1,9 @@
+kind: Deployment
+metadata:
+  name: blog
+  namespace: blog
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret

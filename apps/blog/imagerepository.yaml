@@ -5,3 +5,5 @@ metadata:
 spec:
   image: ghcr.io/tonybutt/blog
   interval: 1m
+  secretRef:
+    name: ghcr-pull-secret
