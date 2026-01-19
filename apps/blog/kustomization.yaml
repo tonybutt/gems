@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - gitrepository.yaml
+  - flux-kustomization.yaml
+  - imagerepository.yaml
+  - imagepolicy.yaml
+  - imageupdateautomation.yaml
+  - secrets/blog-deploy-key.encrypted.yaml

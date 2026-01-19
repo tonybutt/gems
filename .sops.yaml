@@ -6,11 +6,16 @@ creation_rules:
     key_groups:
       - age:
           - *tiberius
+  - path_regex: secrets/blog-deploy-key$
+    key_groups:
+      - age:
+          - *tiberius
   - path_regex: talos/secrets\.yaml$
     key_groups:
       - age:
           - *tiberius
   - path_regex: .*\.encrypted\.yaml$
+    encrypted_regex: ^(stringData|data)$
     key_groups:
       - age:
           - *tiberius
