@@ -15,7 +15,7 @@ spec:
       author:
         name: fluxcdbot
         email: fluxcdbot@users.noreply.github.com
-      messageTemplate: "chore: update blog image to {{.NewValue}}"
+      messageTemplate: "chore: {{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
     push:
       branch: main
   update:
