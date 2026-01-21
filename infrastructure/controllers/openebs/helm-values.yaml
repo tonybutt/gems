@@ -15,12 +15,12 @@ engines:
     mayastor:
       enabled: false
 
-# Pre-upgrade hook - use official kubectl image
+# Pre-upgrade hook - alpine/k8s has kubectl + shell
 preUpgradeHook:
   image:
-    registry: registry.k8s.io
-    repo: kubectl
-    tag: "v1.32.0"
+    registry: docker.io
+    repo: alpine/k8s
+    tag: "1.32.0"
 
 # LocalPV Hostpath configuration
 localpv-provisioner:
