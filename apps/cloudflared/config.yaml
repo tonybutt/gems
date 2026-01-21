@@ -8,8 +8,6 @@ no-autoupdate: true
 ingress:
   - hostname: "blog.abutt.dev"
     service: http://blog.blog.svc.cluster.local:80
-  - hostname: "test.abutt.dev"
-    service: http://nginx-test.nginx-test.svc.cluster.local:80
   - hostname: "*.abutt.dev"
     service: http://cilium-gateway-cloudflare-tunnel.default.svc.cluster.local:80
   # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
