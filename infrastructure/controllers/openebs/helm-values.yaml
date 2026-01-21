@@ -15,6 +15,13 @@ engines:
     mayastor:
       enabled: false
 
+# Pre-upgrade hook - use official kubectl image
+preUpgradeHook:
+  image:
+    registry: registry.k8s.io
+    repo: kubectl
+    tag: "v1.32.0"
+
 # LocalPV Hostpath configuration
 localpv-provisioner:
   localpv:
