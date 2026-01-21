@@ -1,11 +1,63 @@
-# Gems Homelab Cluster
+<div align="center">
 
-Talos Kubernetes cluster managed with Nix and Flux.
+<img src="assets/logo.svg" alt="Gems Logo" width="150" height="150">
+
+# Gems
+
+**A Talos Kubernetes homelab cluster managed with Nix and Flux**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Talos](https://img.shields.io/badge/Talos-1.12.1-blue?logo=talos&logoColor=white)](https://www.talos.dev/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.32.0-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Flux](https://img.shields.io/badge/GitOps-Flux-5468FF?logo=flux&logoColor=white)](https://fluxcd.io/)
+[![Cilium](https://img.shields.io/badge/CNI-Cilium-F8C517?logo=cilium&logoColor=black)](https://cilium.io/)
+[![Nix](https://img.shields.io/badge/Nix-Flakes-5277C3?logo=nixos&logoColor=white)](https://nixos.org/)
+
+</div>
+
+---
+
+## Overview
+
+Gems is a production-grade Kubernetes homelab running on Intel NUCs with Talos Linux. It features:
+
+- **Immutable Infrastructure** - Talos Linux provides a secure, immutable OS
+- **GitOps** - Flux CD manages all cluster resources declaratively
+- **Encrypted Secrets** - SOPS with age encryption for secrets in Git
+- **Reproducible Tooling** - Nix flakes for consistent development environment
+- **Local Storage** - OpenEBS LocalPV for persistent volumes
+
+## Cluster Topology
+
+```
+                    ┌─────────────────┐
+                    │   Cluster API   │
+                    │  192.168.86.250 │
+                    └────────┬────────┘
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│ gem-master-0  │   │ gem-master-1  │   │ gem-master-2  │
+│ Control Plane │   │ Control Plane │   │ Control Plane │
+│ .250 │ 256GB  │   │ .21  │ 512GB  │   │ .31  │ 512GB  │
+└───────────────┘   └───────────────┘   └───────────────┘
+
+        ┌─────────────────────────────────┐
+        │                                 │
+        ▼                                 ▼
+┌───────────────┐                ┌───────────────┐
+│ gem-worker-0  │                │ gem-worker-1  │
+│    Worker     │                │    Worker     │
+│ .25  │ 256GB  │                │ .37  │ 256GB  │
+└───────────────┘                └───────────────┘
+```
 
 ## Prerequisites
 
-- Nix with flakes enabled
-- direnv (optional, for automatic shell)
+- [Nix](https://nixos.org/download.html) with flakes enabled
+- [direnv](https://direnv.net/) (optional, for automatic shell)
 
 ## Quick Start
 
@@ -22,30 +74,42 @@ direnv allow
 ```
 gems/
 ├── apps/                    # Application workloads
+│   ├── blog/                # Blog with image automation
+│   ├── cloudflared/         # Cloudflare tunnel
+│   └── nginx-test/          # Test deployment
 ├── infrastructure/          # Infrastructure components
 │   └── controllers/
-│       └── cilium/          # CNI (rendered from helm)
+│       ├── cilium/          # CNI with Gateway API
+│       ├── reloader/        # Config reload controller
+│       └── openebs/         # Local storage provisioner
 ├── clusters/gems/           # Flux configuration
 │   └── flux-system/
 ├── talos/                   # Talos OS configuration
-│   ├── patches/             # Shared patches (base.yaml)
-│   ├── nodes/               # Per-node patches (hostname)
+│   ├── patches/             # Shared patches
+│   ├── nodes/               # Per-node patches
 │   ├── gen/                 # Generated configs (gitignored)
 │   └── secrets.yaml         # SOPS encrypted secrets
-└── scripts/                 # Shell scripts
+├── docs/                    # Documentation
+│   └── storage.md           # Storage & disk inventory
+└── scripts/                 # Management scripts
 ```
 
-## Bootstrap (Fresh Cluster)
+## Bootstrap
 
-### 1. Prepare Talos ISO
+<details>
+<summary><b>1. Prepare Talos ISO</b></summary>
 
 ```bash
-# Download ISO with iSCSI extensions for OpenEBS
+# Download ISO with extensions
 talos-iso --latest
+
 # Flash to USB and boot target machines
 ```
 
-### 2. Generate Secrets and Configs
+</details>
+
+<details>
+<summary><b>2. Generate Secrets and Configs</b></summary>
 
 ```bash
 # Generate and encrypt cluster secrets (first time only)
@@ -55,7 +119,10 @@ talos-gen secrets
 talos-gen configs
 ```
 
-### 3. Apply First Control Plane
+</details>
+
+<details>
+<summary><b>3. Apply First Control Plane</b></summary>
 
 ```bash
 # Apply config to first control plane (insecure - no certs yet)
@@ -65,7 +132,10 @@ apply-gem-master-0 --insecure
 talosctl bootstrap --talosconfig talos/gen/talosconfig -n 192.168.86.250
 ```
 
-### 4. Install CNI
+</details>
+
+<details>
+<summary><b>4. Install CNI</b></summary>
 
 ```bash
 # Get kubeconfig
@@ -75,7 +145,10 @@ kubeconfig
 kubectl apply -f infrastructure/controllers/cilium/manifests/cilium.yaml
 ```
 
-### 5. Apply Remaining Nodes
+</details>
+
+<details>
+<summary><b>5. Apply Remaining Nodes</b></summary>
 
 ```bash
 # Apply other control planes
@@ -87,23 +160,29 @@ apply-gem-worker-0
 apply-gem-worker-1
 ```
 
-### 6. Install Flux
+</details>
+
+<details>
+<summary><b>6. Install Flux</b></summary>
 
 ```bash
 # Create SOPS age secret for Flux decryption
-kubectl create ns flux-system && sops -d clusters/gems/flux-system/age.agekey | kubectl create secret generic sops-age -n flux-system --from-file=age.agekey=/dev/stdin
+kubectl create ns flux-system
+sops -d clusters/gems/flux-system/age.agekey | \
+  kubectl create secret generic sops-age -n flux-system --from-file=age.agekey=/dev/stdin
 
 # Apply Flux to take over GitOps management
 kubectl apply -k clusters/gems/flux-system/
 ```
 
+</details>
+
 ## Day-2 Operations
 
 ### Applying Configuration Changes
 
-Edit patches in `talos/patches/` or `talos/nodes/`, then:
-
 ```bash
+# Edit patches in talos/patches/ or talos/nodes/, then:
 talos-gen configs
 apply-<node-name>
 ```
@@ -111,8 +190,8 @@ apply-<node-name>
 ### Upgrading Talos
 
 ```bash
+# Use --preserve to keep local storage data
 upgrade-<node-name> <version>
-# Example: upgrade-gem-master-0 1.12.1
 ```
 
 ### Upgrading Kubernetes
@@ -131,31 +210,56 @@ render-helm infrastructure/controllers/cilium/helm-values.yaml
 render-helm --all
 ```
 
-### Re-encrypting SOPS Secrets
-
-```bash
-sops-reencrypt
-```
-
 ## Available Commands
 
-Run `menu` in the dev shell to see all commands:
-
-- `apply-<node>` - Apply config to node (use `--insecure` for first apply)
-- `upgrade-<node> <version>` - Upgrade Talos on node
-- `talos-gen secrets` - Generate new cluster secrets
-- `talos-gen configs` - Generate node configs
-- `talos-iso` - Download Talos ISO with extensions
-- `render-helm` - Render helm charts
-- `kubeconfig` - Get kubeconfig from cluster
-- `nix fmt` - Format all files
+| Command                    | Description                                         |
+| -------------------------- | --------------------------------------------------- |
+| `apply-<node>`             | Apply config to node (`--insecure` for first apply) |
+| `upgrade-<node> <version>` | Upgrade Talos on node                               |
+| `talos-gen secrets`        | Generate new cluster secrets                        |
+| `talos-gen configs`        | Generate node configs                               |
+| `talos-iso`                | Download Talos ISO with extensions                  |
+| `render-helm`              | Render helm charts to manifests                     |
+| `kubeconfig`               | Get kubeconfig from cluster                         |
+| `nix fmt`                  | Format all files                                    |
 
 ## Nodes
 
-| Name         | IP             | Type         |
-| ------------ | -------------- | ------------ |
-| gem-master-0 | 192.168.86.250 | controlplane |
-| gem-master-1 | 192.168.86.21  | controlplane |
-| gem-master-2 | 192.168.86.31  | controlplane |
-| gem-worker-0 | 192.168.86.25  | worker       |
-| gem-worker-1 | 192.168.86.33  | worker       |
+| Node         | IP             | Role          | Storage     |
+| ------------ | -------------- | ------------- | ----------- |
+| gem-master-0 | 192.168.86.250 | Control Plane | 256 GB NVMe |
+| gem-master-1 | 192.168.86.21  | Control Plane | 512 GB NVMe |
+| gem-master-2 | 192.168.86.31  | Control Plane | 512 GB NVMe |
+| gem-worker-0 | 192.168.86.25  | Worker        | 256 GB NVMe |
+| gem-worker-1 | 192.168.86.37  | Worker        | 256 GB NVMe |
+
+## Tech Stack
+
+<table>
+<tr>
+<td align="center" width="96">
+<img src="https://www.talos.dev/images/logo.svg" width="48" height="48" alt="Talos" />
+<br>Talos
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.svg" width="48" height="48" alt="Kubernetes" />
+<br>Kubernetes
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/fluxcd/flux2/main/docs/_files/flux-icon.svg" width="48" height="48" alt="Flux" />
+<br>Flux
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/cilium/cilium/main/Documentation/images/logo-solo.svg" width="48" height="48" alt="Cilium" />
+<br>Cilium
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/NixOS/nixos-artwork/master/logo/nix-snowflake-colours.svg" width="48" height="48" alt="Nix" />
+<br>Nix
+</td>
+</tr>
+</table>
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

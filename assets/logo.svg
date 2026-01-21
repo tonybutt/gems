@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Control plane - purple/violet -->
+    <linearGradient id="controlPlane" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c4b5fd"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+    <!-- Worker - green/teal -->
+    <linearGradient id="worker" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6ee7b7"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <!-- Center - amber/gold -->
+    <linearGradient id="center" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd34d"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+    <!-- Future/empty - gray -->
+    <linearGradient id="future" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6b7280"/>
+      <stop offset="100%" style="stop-color:#4b5563"/>
+    </linearGradient>
+    <!-- Nix blue -->
+    <linearGradient id="nixBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7ebae4"/>
+      <stop offset="100%" style="stop-color:#5277C3"/>
+    </linearGradient>
+    <!-- Glow effect -->
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Kubernetes wheel -->
+  <g transform="translate(100,100)" filter="url(#glow)">
+
+    <!-- Nix-style lambda spokes -->
+    <g fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Lambda to control plane 0 (top) - purple -->
+      <g stroke="#a78bfa">
+        <path d="M -6,-18 L 0,-30 L 6,-18 M 0,-30 L 0,-52"/>
+      </g>
+      <!-- Lambda to control plane 1 (top-right) - purple -->
+      <g stroke="#a78bfa" transform="rotate(60)">
+        <path d="M -6,-18 L 0,-30 L 6,-18 M 0,-30 L 0,-52"/>
+      </g>
+      <!-- Lambda to control plane 2 (bottom-right) - purple -->
+      <g stroke="#a78bfa" transform="rotate(120)">
+        <path d="M -6,-18 L 0,-30 L 6,-18 M 0,-30 L 0,-52"/>
+      </g>
+      <!-- Lambda to worker 0 (bottom) - green -->
+      <g stroke="#6ee7b7" transform="rotate(180)">
+        <path d="M -6,-18 L 0,-30 L 6,-18 M 0,-30 L 0,-52"/>
+      </g>
+      <!-- Lambda to worker 1 (bottom-left) - green -->
+      <g stroke="#6ee7b7" transform="rotate(240)">
+        <path d="M -6,-18 L 0,-30 L 6,-18 M 0,-30 L 0,-52"/>
+      </g>
+      <!-- Lambda to future (top-left) - gray -->
+      <g stroke="#6b7280" opacity="0.5" transform="rotate(300)">
+        <path d="M -6,-18 L 0,-30 L 6,-18 M 0,-30 L 0,-52"/>
+      </g>
+    </g>
+
+    <!-- Outer hex connection -->
+    <polygon points="0,-65 56.3,-32.5 56.3,32.5 0,65 -56.3,32.5 -56.3,-32.5"
+             fill="none" stroke="#9ca3af" stroke-width="1.5" opacity="0.3"/>
+
+    <!-- Center gem - cluster API (amber) -->
+    <g>
+      <polygon points="0,-14 12,0 0,14 -12,0" fill="url(#center)" stroke="#fcd34d" stroke-width="1.5"/>
+      <polygon points="0,-14 12,0 0,0" fill="#fef3c7" opacity="0.5"/>
+      <polygon points="0,0 -12,0 0,-14" fill="#d97706" opacity="0.3"/>
+    </g>
+
+    <!-- Control plane gems (purple) - top, top-right, bottom-right -->
+    <!-- gem-master-0 (top) -->
+    <g transform="translate(0,-65)">
+      <polygon points="0,-12 10,0 0,12 -10,0" fill="url(#controlPlane)" stroke="#c4b5fd" stroke-width="1.5"/>
+      <polygon points="0,-12 10,0 0,0" fill="#ddd6fe" opacity="0.5"/>
+      <polygon points="0,0 -10,0 0,-12" fill="#7c3aed" opacity="0.3"/>
+    </g>
+    <!-- gem-master-1 (top-right) -->
+    <g transform="translate(56.3,-32.5)">
+      <polygon points="0,-12 10,0 0,12 -10,0" fill="url(#controlPlane)" stroke="#c4b5fd" stroke-width="1.5"/>
+      <polygon points="0,-12 10,0 0,0" fill="#ddd6fe" opacity="0.5"/>
+      <polygon points="0,0 -10,0 0,-12" fill="#7c3aed" opacity="0.3"/>
+    </g>
+    <!-- gem-master-2 (bottom-right) -->
+    <g transform="translate(56.3,32.5)">
+      <polygon points="0,-12 10,0 0,12 -10,0" fill="url(#controlPlane)" stroke="#c4b5fd" stroke-width="1.5"/>
+      <polygon points="0,-12 10,0 0,0" fill="#ddd6fe" opacity="0.5"/>
+      <polygon points="0,0 -10,0 0,-12" fill="#7c3aed" opacity="0.3"/>
+    </g>
+
+    <!-- Worker gems (green) - bottom, bottom-left -->
+    <!-- gem-worker-0 (bottom) -->
+    <g transform="translate(0,65)">
+      <polygon points="0,-12 10,0 0,12 -10,0" fill="url(#worker)" stroke="#a7f3d0" stroke-width="1.5"/>
+      <polygon points="0,-12 10,0 0,0" fill="#d1fae5" opacity="0.5"/>
+      <polygon points="0,0 -10,0 0,-12" fill="#059669" opacity="0.3"/>
+    </g>
+    <!-- gem-worker-1 (bottom-left) -->
+    <g transform="translate(-56.3,32.5)">
+      <polygon points="0,-12 10,0 0,12 -10,0" fill="url(#worker)" stroke="#a7f3d0" stroke-width="1.5"/>
+      <polygon points="0,-12 10,0 0,0" fill="#d1fae5" opacity="0.5"/>
+      <polygon points="0,0 -10,0 0,-12" fill="#059669" opacity="0.3"/>
+    </g>
+
+    <!-- Future node slot (dimmed) - top-left -->
+    <g transform="translate(-56.3,-32.5)" opacity="0.4">
+      <polygon points="0,-12 10,0 0,12 -10,0" fill="url(#future)" stroke="#6b7280" stroke-width="1.5"/>
+      <polygon points="0,-12 10,0 0,0" fill="#9ca3af" opacity="0.3"/>
+      <polygon points="0,0 -10,0 0,-12" fill="#374151" opacity="0.3"/>
+    </g>
+  </g>
+</svg>
