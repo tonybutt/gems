@@ -236,7 +236,7 @@ render-helm --all
 <table>
 <tr>
 <td align="center" width="96">
-<img src="https://www.talos.dev/images/logo.svg" width="48" height="48" alt="Talos" />
+<img src="https://www.talos.dev/img/sidero-logo.svg" width="48" height="48" alt="Talos" />
 <br>Talos
 </td>
 <td align="center" width="96">
@@ -244,7 +244,7 @@ render-helm --all
 <br>Kubernetes
 </td>
 <td align="center" width="96">
-<img src="https://raw.githubusercontent.com/fluxcd/flux2/main/docs/_files/flux-icon.svg" width="48" height="48" alt="Flux" />
+<img src="https://raw.githubusercontent.com/fluxcd/website/main/static/img/flux-icon.svg" width="48" height="48" alt="Flux" />
 <br>Flux
 </td>
 <td align="center" width="96">
