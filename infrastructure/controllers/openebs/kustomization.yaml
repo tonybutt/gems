@@ -4,5 +4,4 @@ namespace: openebs
 resources:
   - ns.yaml
   - manifests/openebs.yaml
-patches:
-  - path: storageclass.yaml
+  - storageclass.yaml

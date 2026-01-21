@@ -4,21 +4,21 @@
 # namespace: openebs
 # release-name: openebs
 
-# Only enable LocalPV Hostpath - disable other engines
-localpv-provisioner:
-  enabled: true
-  localpv:
-    basePath: /var/openebs/local
-    hostpathClass:
-      # We create our own StorageClass with WaitForFirstConsumer
+# Engine selection - only enable LocalPV Hostpath
+engines:
+  local:
+    lvm:
+      enabled: false
+    zfs:
+      enabled: false
+  replicated:
+    mayastor:
       enabled: false
 
-# Disable other storage engines
-lvm-localpv:
-  enabled: false
-
-zfs-localpv:
-  enabled: false
-
-mayastor:
-  enabled: false
+# LocalPV Hostpath configuration
+localpv-provisioner:
+  localpv:
+    basePath: /var/openebs/local
+  hostpathClass:
+    # We create our own StorageClass with WaitForFirstConsumer
+    enabled: false
