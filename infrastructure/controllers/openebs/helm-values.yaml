@@ -1,0 +1,24 @@
+# chart: openebs/openebs
+# version: 4.2.0
+# repo: https://openebs.github.io/openebs
+# namespace: openebs
+# release-name: openebs
+
+# Only enable LocalPV Hostpath - disable other engines
+localpv-provisioner:
+  enabled: true
+  localpv:
+    basePath: /var/openebs/local
+    hostpathClass:
+      # We create our own StorageClass with WaitForFirstConsumer
+      enabled: false
+
+# Disable other storage engines
+lvm-localpv:
+  enabled: false
+
+zfs-localpv:
+  enabled: false
+
+mayastor:
+  enabled: false

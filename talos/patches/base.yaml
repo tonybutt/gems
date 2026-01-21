@@ -1,6 +1,16 @@
 machine:
   install:
     disk: /dev/nvme0n1
+  kubelet:
+    extraMounts:
+      # OpenEBS LocalPV hostpath storage
+      - destination: /var/openebs/local
+        type: bind
+        source: /var/openebs/local
+        options:
+          - rbind
+          - rshared
+          - rw
 cluster:
   network:
     cni:
