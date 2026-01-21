@@ -114,6 +114,9 @@ pkgs.mkShell {
 
       # Github
       gh
+
+      # Image tools (for social preview generation)
+      librsvg # rsvg-convert for SVG to PNG
     ]
     ++ upgradeScripts
     ++ applyScripts;

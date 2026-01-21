@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="Gems Logo" width="150" height="150">
-
-# Gems
-
-**A Talos Kubernetes homelab cluster managed with Nix and Flux**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/social-preview.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/social-preview.svg">
+  <img src="assets/social-preview.svg" alt="Gems - Talos Kubernetes Homelab" width="100%">
+</picture>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Talos](https://img.shields.io/badge/Talos-1.12.1-blue?logo=talos&logoColor=white)](https://www.talos.dev/)
@@ -14,8 +14,6 @@
 [![Nix](https://img.shields.io/badge/Nix-Flakes-5277C3?logo=nixos&logoColor=white)](https://nixos.org/)
 
 </div>
-
----
 
 ## Overview
 
