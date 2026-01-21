@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - ns.yaml
   - manifests/openebs.yaml
-  - storageclass.yaml
+patches:
+  - path: storageclass.yaml
