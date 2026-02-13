@@ -1,0 +1,206 @@
+---
+# Source: oauth2-proxy/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: oauth2-proxy    
+    helm.sh/chart: oauth2-proxy-7.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: authentication-proxy
+    app.kubernetes.io/part-of: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: oauth2-proxy
+    app.kubernetes.io/version: "7.8.1"
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+automountServiceAccountToken: true
+---
+# Source: oauth2-proxy/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: oauth2-proxy    
+    helm.sh/chart: oauth2-proxy-7.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: authentication-proxy
+    app.kubernetes.io/part-of: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: oauth2-proxy
+    app.kubernetes.io/version: "7.8.1"
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+type: Opaque
+data:
+  cookie-secret: "Q0hBTkdFX01FX0dFTkVSQVRFX1NFQ1JFVA=="
+  client-secret: "Q0hBTkdFX01F"
+  client-id: "Q0hBTkdFX01F"
+---
+# Source: oauth2-proxy/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: oauth2-proxy    
+    helm.sh/chart: oauth2-proxy-7.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: authentication-proxy
+    app.kubernetes.io/part-of: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: oauth2-proxy
+    app.kubernetes.io/version: "7.8.1"
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+data:
+  oauth2_proxy.cfg: "# Zitadel OIDC provider (recommended - self-hosted)\nprovider = \"oidc\"\noidc_issuer_url = \"https://auth.abutt.dev\"\nemail_domains = [ \"*\" ]\n\n# Alternative: Google\n# provider = \"google\"\n# email_domains = [ \"yourdomain.com\" ]\n\n# Alternative: GitHub\n# provider = \"github\"\n# github_org = \"your-org\"\n\n# Cookie settings\ncookie_secure = true\ncookie_samesite = \"lax\"\ncookie_httponly = true\ncookie_expire = \"168h\"\ncookie_refresh = \"1h\"\n\n# For ext_authz mode - respond to auth requests\nreverse_proxy = true\nset_xauthrequest = true\nset_authorization_header = true\npass_access_token = true\npass_user_headers = true\n\n# Skip auth for these paths (health checks, etc)\nskip_auth_routes = [\n  \"^/health\",\n  \"^/ready\",\n  \"^/metrics\"\n]\n\n# Upstream for sign-in/callback (served by oauth2-proxy itself)\nupstreams = [ \"static://200\" ]\n\n# Whitelist your domain\nwhitelist_domains = [ \".abutt.dev\" ]"
+---
+# Source: oauth2-proxy/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oauth2-proxy    
+    helm.sh/chart: oauth2-proxy-7.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: authentication-proxy
+    app.kubernetes.io/part-of: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: oauth2-proxy
+    app.kubernetes.io/version: "7.8.1"
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4180
+      targetPort: http
+      protocol: TCP
+      appProtocol: http
+      name: http
+    - port: 44180
+      protocol: TCP
+      appProtocol: http
+      targetPort: metrics
+      name: metrics
+  selector:    
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: oauth2-proxy
+---
+# Source: oauth2-proxy/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oauth2-proxy    
+    helm.sh/chart: oauth2-proxy-7.12.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: authentication-proxy
+    app.kubernetes.io/part-of: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/instance: oauth2-proxy
+    app.kubernetes.io/version: "7.8.1"
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:      
+      app.kubernetes.io/name: oauth2-proxy
+      app.kubernetes.io/instance: oauth2-proxy
+  template:
+    metadata:
+      annotations:
+        checksum/config: f8607507d8e061222fe4485160dca23fc44be3bec5b014c4f3cb22996ad9071e
+        checksum/secret: 7a5478270660d5da1cc4733f0140351795382bccc90fcd0d54167814e010f56c
+        checksum/google-secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        checksum/redis-secret: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+      labels:
+        app: oauth2-proxy        
+        helm.sh/chart: oauth2-proxy-7.12.0
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: authentication-proxy
+        app.kubernetes.io/part-of: oauth2-proxy
+        app.kubernetes.io/name: oauth2-proxy
+        app.kubernetes.io/instance: oauth2-proxy
+        app.kubernetes.io/version: "7.8.1"
+    spec:
+      serviceAccountName: oauth2-proxy
+      enableServiceLinks: true
+      automountServiceAccountToken: true
+      containers:
+      - name: oauth2-proxy
+        image: "quay.io/oauth2-proxy/oauth2-proxy:v7.8.1"
+        imagePullPolicy: IfNotPresent
+        args:
+          - --http-address=0.0.0.0:4180
+          - --https-address=0.0.0.0:4443
+          - --metrics-address=0.0.0.0:44180
+          - --config=/etc/oauth2_proxy/oauth2_proxy.cfg
+        env:
+        - name: OAUTH2_PROXY_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name:  oauth2-proxy
+              key: client-id
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name:  oauth2-proxy
+              key: client-secret
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name:  oauth2-proxy
+              key: cookie-secret
+        ports:
+          - containerPort: 4180
+            name: http
+            protocol: TCP
+          - containerPort: 44180
+            protocol: TCP
+            name: metrics
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 0
+          timeoutSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 0
+          timeoutSeconds: 5
+          successThreshold: 1
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        volumeMounts:
+        - mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
+          name: configmain
+          subPath: oauth2_proxy.cfg
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 2000
+          runAsNonRoot: true
+          runAsUser: 2000
+          seccompProfile:
+            type: RuntimeDefault
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: oauth2-proxy
+        name: configmain

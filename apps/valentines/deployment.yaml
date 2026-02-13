@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valentines
+  labels:
+    app: valentines
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valentines
+  template:
+    metadata:
+      labels:
+        app: valentines
+    spec:
+      containers:
+        - name: valentines
+          image: ghcr.io/tonybutt/valentines:latest
+          ports:
+            - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5

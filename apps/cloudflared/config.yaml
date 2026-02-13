@@ -6,6 +6,8 @@ metrics: 0.0.0.0:2000
 no-autoupdate: true
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/ingress
 ingress:
+  - hostname: "valentines.abutt.dev"
+    service: http://valentines.valentines.svc.cluster.local:80
   - hostname: "blog.abutt.dev"
     service: http://blog.blog.svc.cluster.local:80
   - hostname: "*.abutt.dev"
