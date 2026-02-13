@@ -18,8 +18,9 @@ spec:
         - name: valentines
           image: ghcr.io/tonybutt/valentines:latest
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -27,12 +28,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
