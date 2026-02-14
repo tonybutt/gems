@@ -1,0 +1,16 @@
+namespace: valentines-tunnel
+resources:
+  - ns.yaml
+  - deployment.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    reloader.stakater.com/auto: "true"
+configMapGenerator:
+  - name: valentines-tunnel
+    files:
+      - config.yaml
+secretGenerator:
+  - name: tunnel-credentials
+    files:
+      - credentials.json=secrets/tunnel-credentials.encrypted.json
