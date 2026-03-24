@@ -12,6 +12,8 @@ gatewayAPI:
 l2announcements:
   enabled: true
 kubeProxyReplacement: true
+bpf:
+  attachMode: tc
 securityContext:
   capabilities:
     ciliumAgent:
