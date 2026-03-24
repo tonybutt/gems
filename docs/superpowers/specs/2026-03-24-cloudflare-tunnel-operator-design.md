@@ -169,6 +169,11 @@ cloudflare-tunnel-operator/
 │       ├── configmap.rs        # cloudflared config builder
 │       ├── deployment.rs       # cloudflared Deployment builder
 │       └── gateway.rs          # Gateway resource builder
+├── docs/
+│   ├── getting-started.md      # Quick start guide
+│   ├── configuration.md        # Full CRD reference, examples
+│   ├── architecture.md         # How the operator works internally
+│   └── troubleshooting.md      # Common issues, debugging
 ├── deploy/
 │   ├── crd.yaml                # Generated CRD manifest
 │   └── kustomization.yaml      # Controller deployment + RBAC
@@ -209,6 +214,38 @@ Rust toolchain derived from `rust-toolchain.toml`. Additional tools: `kubectl`, 
 | `reqwest`                        | HTTP client for Cloudflare API         |
 | `thiserror`                      | Error types                            |
 | `tracing` / `tracing-subscriber` | Structured logging                     |
+
+## Documentation
+
+### README
+
+The README serves as the primary install guide and must cover:
+
+- **Overview** — what the operator does, in one paragraph
+- **Prerequisites** — Kubernetes cluster, Cloudflare account, API token with required permissions (Zone:DNS:Edit, Account:Cloudflare Tunnel:Edit)
+- **Installation** — step-by-step:
+  1. Apply the CRD
+  2. Create the API token Secret
+  3. Deploy the controller (with example manifests)
+  4. Create a `CloudflareTunnel` CR (with a complete working example)
+  5. Create an HTTPRoute in the app namespace (with example)
+- **Configuration reference** — full spec field documentation with defaults
+- **Status fields** — what each condition means
+- **Uninstall** — clean removal steps (finalizers handle Cloudflare cleanup)
+
+### Docs Site
+
+A `docs/` directory in the repo root with markdown files, structured for potential static site hosting:
+
+```
+docs/
+├── getting-started.md    # Quick start guide
+├── configuration.md      # Full CRD reference, examples
+├── architecture.md       # How the operator works internally
+└── troubleshooting.md    # Common issues, debugging
+```
+
+These docs expand on the README with deeper explanations, multiple examples, and operational guidance.
 
 ## Deployment into gems Cluster
 
