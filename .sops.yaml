@@ -1,37 +1,53 @@
 keys:
   - &tiberius ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICnQDGTR3J244BlVZ3u0I9l476XRxlv0DdmREzTku3Ib abutt@tiberius.com
+  - &lapnix ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYkXD5kuITfXNUgU+yzirklzKXKRlT5ZKYwKo03lzzz abutt@tiberius.com
+  - &atlas ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII+cqj41D3k8Dk9Bz4l/06XVkkxMJIpg1orvuf56/Hme
   - &gems-cluster age1r3aas35hvsswx2q04f2w7asg5373wvdydr4lufgdptjfq4hms9yq3au5rx
 creation_rules:
   - path_regex: clusters/gems/flux-system/age\.agekey$
     key_groups:
       - age:
           - *tiberius
+          - *lapnix
+          - *atlas
   - path_regex: secrets/blog-deploy-key$
     key_groups:
       - age:
           - *tiberius
+          - *lapnix
+          - *atlas
   - path_regex: talos/secrets\.yaml$
     key_groups:
       - age:
           - *tiberius
+          - *lapnix
+          - *atlas
   - path_regex: .*\.encrypted\.yaml$
     encrypted_regex: ^(stringData|data)$
     key_groups:
       - age:
           - *tiberius
           - *gems-cluster
+          - *lapnix
+          - *atlas
   - path_regex: .*\.encrypted\.env$
     key_groups:
       - age:
           - *tiberius
           - *gems-cluster
+          - *lapnix
+          - *atlas
   - path_regex: .*\.encrypted\.json$
     key_groups:
       - age:
           - *tiberius
           - *gems-cluster
+          - *lapnix
+          - *atlas
   - path_regex: .*\.encrypted\.pem$
     key_groups:
       - age:
           - *tiberius
           - *gems-cluster
+          - *lapnix
+          - *atlas
