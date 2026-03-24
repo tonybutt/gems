@@ -196,7 +196,7 @@ data:
   enable-ipv6-big-tcp: "false"
   enable-ipv6-masquerade: "true"
   enable-tunnel-big-tcp: "false"
-  enable-tcx: "true"
+  enable-tcx: "false"
   datapath-mode: "veth"
   enable-masquerade-to-route-source: "false"
 

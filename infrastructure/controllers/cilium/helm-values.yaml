@@ -13,7 +13,7 @@ l2announcements:
   enabled: true
 kubeProxyReplacement: true
 bpf:
-  attachMode: tc
+  enableTCX: false
 securityContext:
   capabilities:
     ciliumAgent:
