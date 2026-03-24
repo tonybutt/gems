@@ -7,8 +7,8 @@
   };
 
   versions = {
-    talos = "1.12.1";
-    kubernetes = "1.32.0";
+    talos = "1.12.6";
+    kubernetes = "1.35.3";
   };
 
   # Shared machine config applied to all nodes

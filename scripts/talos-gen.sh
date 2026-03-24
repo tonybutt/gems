@@ -70,6 +70,8 @@ generate_configs() {
     echo "Generating config for $name ($type)..."
     talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
       --with-secrets "$SECRETS_FILE" \
+      --install-image "ghcr.io/siderolabs/installer:v$TALOS_VERSION" \
+      --kubernetes-version "$KUBERNETES_VERSION" \
       --config-patch "@$PATCHES_DIR/base.yaml" \
       --config-patch "@$NODES_DIR/$name.yaml" \
       --output-types "$type" \
@@ -81,6 +83,8 @@ generate_configs() {
   echo "Generating talosconfig..."
   talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
     --with-secrets "$SECRETS_FILE" \
+    --install-image "ghcr.io/siderolabs/installer:v$TALOS_VERSION" \
+    --kubernetes-version "$KUBERNETES_VERSION" \
     --output-types talosconfig \
     -o "$GEN_DIR/talosconfig" \
     --force

@@ -14,14 +14,11 @@ let
     node:
     pkgs.writeShellScriptBin "upgrade-${node.name}" ''
       set -euo pipefail
-      if [ -z "''${1:-}" ]; then
-        echo "Usage: upgrade-${node.name} <version>"
-        echo "Example: upgrade-${node.name} ${nodeConfig.versions.talos}"
-        exit 1
-      fi
+      VERSION="''${1:-${nodeConfig.versions.talos}}"
+      echo "Upgrading ${node.name} (${node.ip}) to Talos v$VERSION..."
       ${pkgs.talosctl}/bin/talosctl upgrade \
         --talosconfig talos/gen/talosconfig \
-        --image "ghcr.io/siderolabs/installer:v$1" \
+        --image "ghcr.io/siderolabs/installer:v$VERSION" \
         -n ${node.ip}
     ''
   ) nodeConfig.nodes;
@@ -45,13 +42,25 @@ let
     ''
   ) nodeConfig.nodes;
 
+  # Kubernetes upgrade script
+  upgradeK8s = pkgs.writeShellScriptBin "upgrade-k8s" ''
+    set -euo pipefail
+    VERSION="''${1:-${nodeConfig.versions.kubernetes}}"
+    echo "Upgrading Kubernetes to v$VERSION..."
+    ${pkgs.talosctl}/bin/talosctl upgrade-k8s \
+      --talosconfig talos/gen/talosconfig \
+      -n ${nodeConfig.cluster.controlPlaneEndpoint} \
+      --to "$VERSION"
+  '';
+
   # Menu script
   showMenu = pkgs.writeShellScriptBin "menu" ''
     echo ""
     echo "  Gems Homelab Cluster (Talos ${nodeConfig.versions.talos} / K8s ${nodeConfig.versions.kubernetes})"
     echo ""
     echo "  Node commands:"
-    echo "    upgrade-<node> <version>  Upgrade Talos on node"
+    echo "    upgrade-<node> [version]  Upgrade Talos on node (default: ${nodeConfig.versions.talos})"
+    echo "    upgrade-k8s [version]     Upgrade Kubernetes (default: ${nodeConfig.versions.kubernetes})"
     echo "    apply-<node> [--insecure] Apply config to node (-i for first apply)"
     echo ""
     echo "  Nodes: ${builtins.concatStringsSep ", " (map (n: n.name) nodeConfig.nodes)}"
@@ -111,6 +120,7 @@ pkgs.mkShell {
       # Node scripts
       showMenu
       kubeconfig
+      upgradeK8s
 
       # Github
       gh
