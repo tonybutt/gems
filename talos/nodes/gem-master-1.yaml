@@ -2,3 +2,12 @@ apiVersion: v1alpha1
 kind: HostnameConfig
 auto: off
 hostname: gem-master-1
+---
+machine:
+  network:
+    interfaces:
+      - interface: eno1
+        vip:
+          ip: 192.168.86.69
+  certSANs:
+    - 192.168.86.69

@@ -2,8 +2,8 @@
 {
   cluster = {
     name = "gems";
-    endpoint = "https://192.168.86.250:6443";
-    controlPlaneEndpoint = "192.168.86.250";
+    endpoint = "https://192.168.86.69:6443";
+    controlPlaneEndpoint = "192.168.86.69";
   };
 
   versions = {
