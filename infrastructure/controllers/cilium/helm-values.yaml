@@ -1,5 +1,5 @@
 # chart: cilium/cilium
-# version: 1.19.2
+# version: 1.18.7
 # repo: https://helm.cilium.io/
 # namespace: kube-system
 # release-name: cilium
@@ -12,8 +12,6 @@ gatewayAPI:
 l2announcements:
   enabled: true
 kubeProxyReplacement: true
-bpf:
-  enableTCX: false
 securityContext:
   capabilities:
     ciliumAgent:
