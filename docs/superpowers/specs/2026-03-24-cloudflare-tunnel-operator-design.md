@@ -94,6 +94,7 @@ The cloudflared config is intentionally simple. All routing is delegated to the 
 tunnel: <tunnel-id>
 ingress:
   - service: http://<tunnel-name>-gateway.<namespace>.svc.cluster.local:80
+  - service: http_status:404
 ```
 
 ### Deletion
@@ -110,8 +111,10 @@ Standard requeue-with-backoff. If the Cloudflare API is unavailable, the reconci
 
 ### Authentication
 
-- **Controller-wide default:** A Secret in the controller's namespace containing a Cloudflare API token. Referenced via controller flags/env.
-- **Per-CR override:** `spec.credentialsRef` points to a specific Secret. Useful for multiple Cloudflare accounts or zones.
+Two distinct types of secrets are involved:
+
+- **API token** — used to call the Cloudflare API (create tunnels, manage DNS). Either a controller-wide default Secret (referenced via controller flags/env) or a per-CR override via `spec.credentialsRef`.
+- **Tunnel credentials** — per-tunnel JSON blob returned by the Cloudflare API when creating a tunnel. Stored in a controller-owned Secret. Not user-managed.
 
 ## App Integration
 
