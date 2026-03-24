@@ -7,6 +7,7 @@ machine:
   network:
     interfaces:
       - interface: enp89s0
+        dhcp: true
         vip:
           ip: 192.168.86.69
   certSANs:
