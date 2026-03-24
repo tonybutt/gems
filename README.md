@@ -7,8 +7,8 @@
 </picture>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Talos](https://img.shields.io/badge/Talos-1.12.1-blue?logo=talos&logoColor=white)](https://www.talos.dev/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.32.0-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Talos](https://img.shields.io/badge/Talos-1.12.6-blue?logo=talos&logoColor=white)](https://www.talos.dev/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.35.3-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![Flux](https://img.shields.io/badge/GitOps-Flux-5468FF?logo=flux&logoColor=white)](https://fluxcd.io/)
 [![Cilium](https://img.shields.io/badge/CNI-Cilium-F8C517?logo=cilium&logoColor=black)](https://cilium.io/)
 [![Nix](https://img.shields.io/badge/Nix-Flakes-5277C3?logo=nixos&logoColor=white)](https://nixos.org/)

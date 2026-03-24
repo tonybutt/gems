@@ -16,13 +16,11 @@ spec:
     spec:
       containers:
         - name: cloudflared
-          image: cloudflare/cloudflared:2024.11.0
+          image: cloudflare/cloudflared:2026.3.0
           args:
             - tunnel
             - --config
             - /etc/cloudflared/config/config.yaml
-            - --origincert
-            - /etc/cloudflared/certs/cert.pem
             - run
           livenessProbe:
             httpGet:
@@ -38,13 +36,7 @@ spec:
             - name: creds
               mountPath: /etc/cloudflared/creds
               readOnly: true
-            - name: cert
-              mountPath: /etc/cloudflared/certs
-              readOnly: true
       volumes:
-        - name: cert
-          secret:
-            secretName: tunnel-origin-cert
         - name: creds
           secret:
             secretName: tunnel-credentials

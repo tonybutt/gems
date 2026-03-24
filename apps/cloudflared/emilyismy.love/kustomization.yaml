@@ -1,7 +1,9 @@
-namespace: cloudflared
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: valentines-tunnel
 resources:
+  - ../base
   - ns.yaml
-  - deployment.yaml
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
@@ -11,9 +13,6 @@ configMapGenerator:
     files:
       - config.yaml
 secretGenerator:
-  - name: tunnel-origin-cert
-    files:
-      - cert.pem=secrets/cert.encrypted.pem
   - name: tunnel-credentials
     files:
-      - credentials.json=secrets/228fd238-cb69-4336-82bf-f6e628dcdbda.encrypted.json
+      - credentials.json=secrets/tunnel-credentials.encrypted.json
