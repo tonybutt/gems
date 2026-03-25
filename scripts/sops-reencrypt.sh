@@ -47,12 +47,13 @@ fi
 
 echo "Searching for SOPS-encrypted files in: $REPO_ROOT"
 
-# Find all candidate files, excluding .git directory
+# Find all candidate files containing sops metadata, excluding .git directory
 mapfile -t encrypted_files < <(
   find "$REPO_ROOT" \
-    -type f \( -name "*.yaml" -o -name "*.yml" -o -name "*.env" -o -name "*.json" -o -name "*.dockerconfigjson" \) \
+    -type f \
     ! -path "*/.git/*" \
-    -exec grep -l "^sops:" {} \; 2>/dev/null
+    ! -path "*/node_modules/*" \
+    -exec grep -rl '"sops"\s*:\|^sops:' {} \; 2>/dev/null
 )
 
 if [ ${#encrypted_files[@]} -eq 0 ]; then
@@ -71,14 +72,19 @@ if [ "$DRY_RUN" = true ]; then
   exit 0
 fi
 
-# Determine input type based on file extension
+# Determine input type from content (sops needs this for non-standard extensions)
 get_input_type() {
   local file="$1"
-  case "$file" in
-    *.dockerconfigjson) echo "json" ;;
-    *.env)              echo "dotenv" ;;
-    *)                  echo "" ;;
-  esac
+  # Check file content first — sops can't auto-detect format for unusual extensions
+  if head -1 "$file" | grep -q '^{'; then
+    echo "json"
+  elif head -1 "$file" | grep -q '^sops:'; then
+    echo "" # yaml is default
+  elif [[ "$file" == *.env ]]; then
+    echo "dotenv"
+  else
+    echo ""
+  fi
 }
 
 failed=0
