@@ -10,3 +10,5 @@ data:
     s3_bucket = "jcu-alumni-media"
     s3_endpoint = "https://s3.gems.local"
     s3_region = "us-east-1"
+    resend_from = "noreply@jcu.abutt.dev"
+    app_url = "https://jcu.abutt.dev"
