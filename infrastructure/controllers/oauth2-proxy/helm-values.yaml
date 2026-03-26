@@ -27,7 +27,7 @@ config:
       "^/ready",
       "^/metrics"
     ]
-    upstreams = [ "static://200" ]
+    upstreams = [ "http://valentines.valentines.svc.cluster.local:80" ]
     whitelist_domains = [ ".abutt.dev" ]
 extraVolumes:
   - name: secrets
