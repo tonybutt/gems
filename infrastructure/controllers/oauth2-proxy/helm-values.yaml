@@ -9,6 +9,7 @@ config:
     oidc_issuer_url = "https://sso.abutt.dev/oauth2/openid/oauth2-proxy"
     email_domains = [ "*" ]
     client_id = "oauth2-proxy"
+    code_challenge_method = "S256"
     client_secret_file = "/run/secrets/client-secret"
     cookie_secret_file = "/run/secrets/cookie-secret"
     cookie_secure = true
