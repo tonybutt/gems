@@ -3,7 +3,7 @@ no-autoupdate: true
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/ingress
 ingress:
   - hostname: "sso.abutt.dev"
-    service: https://cilium-gateway-cloudflare-tunnel.default.svc.cluster.local:443
+    service: https://kanidm.kanidm.svc.cluster.local:8443
     originRequest:
       noTLSVerify: true
   - hostname: "valentines.abutt.dev"
