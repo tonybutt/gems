@@ -41,6 +41,10 @@ spec:
             - name: certs
               mountPath: /certs
               readOnly: true
+            - name: style
+              mountPath: /hpkg/style.css
+              subPath: style.css
+              readOnly: true
             - name: data
               mountPath: /data
           readinessProbe:
@@ -65,6 +69,9 @@ spec:
           secret:
             secretName: kanidm-tls
             defaultMode: 0440
+        - name: style
+          configMap:
+            name: kanidm-style
   volumeClaimTemplates:
     - metadata:
         name: data

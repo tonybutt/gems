@@ -11,3 +11,6 @@ configMapGenerator:
   - name: kanidm-config
     files:
       - config.toml
+  - name: kanidm-style
+    files:
+      - style.css
