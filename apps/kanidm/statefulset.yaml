@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: kanidm
-          image: ghcr.io/kanidm/server:1.9.2
+          image: kanidm/server:1.9.2
           ports:
             - containerPort: 8443
           volumeMounts:
