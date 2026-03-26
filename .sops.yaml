@@ -10,12 +10,6 @@ creation_rules:
           - *tiberius
           - *lapnix
           - *atlas
-  - path_regex: secrets/blog-deploy-key$
-    key_groups:
-      - age:
-          - *tiberius
-          - *lapnix
-          - *atlas
   - path_regex: talos/secrets\.yaml$
     key_groups:
       - age:
