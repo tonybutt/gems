@@ -6,6 +6,7 @@ resources:
   - certificate.yaml
   - statefulset.yaml
   - service.yaml
+  - tlsroute.yaml
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:

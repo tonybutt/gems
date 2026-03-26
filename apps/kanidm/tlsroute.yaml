@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
+metadata:
+  name: kanidm
+spec:
+  parentRefs:
+    - name: cloudflare-tunnel
+      namespace: default
+      sectionName: tls-passthrough
+  hostnames:
+    - sso.abutt.dev
+  rules:
+    - backendRefs:
+        - name: kanidm
+          port: 8443
