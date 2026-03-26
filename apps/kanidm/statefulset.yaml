@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kanidm
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  serviceName: kanidm
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanidm
+  template:
+    metadata:
+      labels:
+        app: kanidm
+    spec:
+      containers:
+        - name: kanidm
+          image: ghcr.io/kanidm/server:1.9.2
+          ports:
+            - containerPort: 8443
+          volumeMounts:
+            - name: config
+              mountPath: /data/server.toml
+              subPath: config.toml
+              readOnly: true
+            - name: certs
+              mountPath: /certs
+              readOnly: true
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 30
+      volumes:
+        - name: config
+          configMap:
+            name: kanidm-config
+        - name: certs
+          secret:
+            secretName: kanidm-tls
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: openebs-hostpath
+        resources:
+          requests:
+            storage: 1Gi
