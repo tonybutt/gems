@@ -1,0 +1,7 @@
+# chart: jetstack/cert-manager
+# version: 1.20.0
+# repo: https://charts.jetstack.io
+# namespace: cert-manager
+# release-name: cert-manager
+crds:
+  enabled: true
