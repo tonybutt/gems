@@ -4,8 +4,6 @@ namespace: oauth2-proxy
 resources:
   - ns.yaml
   - manifests/oauth2-proxy.yaml
-generatorOptions:
-  disableNameSuffixHash: true
 secretGenerator:
   - name: oauth2-proxy-secrets
     files:
