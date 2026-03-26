@@ -16,5 +16,6 @@ spec:
   sourceRef:
     kind: ExternalArtifact
     name: app-cloudflared-emilyismy-love
+  path: ./emilyismy.love
   prune: true
   wait: true

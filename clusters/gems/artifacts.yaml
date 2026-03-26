@@ -23,13 +23,17 @@ spec:
     - name: app-cloudflared-abutt-dev
       originRevision: "@monorepo"
       copy:
+        - from: "@monorepo/apps/cloudflared/base/**"
+          to: "@artifact/base/"
         - from: "@monorepo/apps/cloudflared/abutt.dev/**"
-          to: "@artifact/"
+          to: "@artifact/abutt.dev/"
     - name: app-cloudflared-emilyismy-love
       originRevision: "@monorepo"
       copy:
+        - from: "@monorepo/apps/cloudflared/base/**"
+          to: "@artifact/base/"
         - from: "@monorepo/apps/cloudflared/emilyismy.love/**"
-          to: "@artifact/"
+          to: "@artifact/emilyismy.love/"
     - name: app-kanidm
       originRevision: "@monorepo"
       copy:

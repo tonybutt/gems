@@ -16,5 +16,6 @@ spec:
   sourceRef:
     kind: ExternalArtifact
     name: app-cloudflared-abutt-dev
+  path: ./abutt.dev
   prune: true
   wait: true
