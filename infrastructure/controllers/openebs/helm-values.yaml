@@ -4,6 +4,12 @@
 # namespace: openebs
 # release-name: openebs
 
+# Disable observability stack (enabled by default in 4.4.0)
+loki:
+  enabled: false
+alloy:
+  enabled: false
+
 # Engine selection - only enable LocalPV Hostpath
 engines:
   local:
