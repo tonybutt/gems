@@ -4,3 +4,10 @@ namespace: cert-manager
 resources:
   - ns.yaml
   - manifests/cert-manager.yaml
+  - clusterissuer.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+secretGenerator:
+  - name: cloudflare-api-token
+    envs:
+      - secrets/cloudflare-api-token.encrypted.env
