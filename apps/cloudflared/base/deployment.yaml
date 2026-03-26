@@ -22,12 +22,9 @@ spec:
             - --config
             - /etc/cloudflared/config/config.yaml
             - run
-          env:
-            - name: TUNNEL_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: tunnel-token
-                  key: token
+          envFrom:
+            - secretRef:
+                name: tunnel-token
           livenessProbe:
             httpGet:
               path: /ready
