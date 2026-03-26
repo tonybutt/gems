@@ -21,6 +21,14 @@ git-hooks.lib.${system}.run {
       files = "helm-values\\.yaml$";
       pass_filenames = true;
     };
+    validate-kustomize = {
+      enable = true;
+      name = "validate-kustomize";
+      entry = "${packages.validate-kustomize}/bin/validate-kustomize";
+      files = "kustomization\\.yaml$|\\.yaml$";
+      pass_filenames = false;
+      always_run = true;
+    };
     commitizen.enable = true;
   };
 }

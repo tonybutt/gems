@@ -73,6 +73,17 @@ in
     text = talosGenScript;
   };
 
+  validate-kustomize = pkgs.writeShellApplication {
+    name = "validate-kustomize";
+    runtimeInputs = with pkgs; [
+      kustomize
+      git
+      findutils
+      coreutils
+    ];
+    text = builtins.readFile ../scripts/validate-kustomize.sh;
+  };
+
   talos-iso = pkgs.writeShellApplication {
     name = "talos-iso";
     runtimeInputs = with pkgs; [
