@@ -16,28 +16,6 @@ metadata:
   namespace: oauth2-proxy
 automountServiceAccountToken: true
 ---
-# Source: oauth2-proxy/templates/secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  labels:
-    app: oauth2-proxy    
-    helm.sh/chart: oauth2-proxy-10.3.0
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: authentication-proxy
-    app.kubernetes.io/part-of: oauth2-proxy
-    app.kubernetes.io/name: oauth2-proxy
-    app.kubernetes.io/instance: oauth2-proxy
-    app.kubernetes.io/version: "7.15.0"
-  name: oauth2-proxy
-  namespace: oauth2-proxy
-type: Opaque
-data:
-  
-  cookie-secret: "WFhYWFhYWFhYWFhYWFhYWA=="
-  client-secret: "WFhYWFhYWFg="
-  client-id: "WFhYWFhYWA=="
----
 # Source: oauth2-proxy/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -114,7 +92,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 3c70a0e98fcf616860f3c0b0991688e1973ea0999b858a817c678892663dfdca
-        checksum/secret: 9eb46bbdefd5cf844a2c4965b1241a7177addaa7c07789e7873ccda6b0104111
+        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         checksum/google-secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         checksum/redis-secret: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
       labels:
@@ -140,21 +118,6 @@ spec:
           - --metrics-address=0.0.0.0:44180
           - --config=/etc/oauth2_proxy/oauth2_proxy.cfg
         env:
-        - name: OAUTH2_PROXY_CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name:  oauth2-proxy
-              key: client-id
-        - name: OAUTH2_PROXY_CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name:  oauth2-proxy
-              key: client-secret
-        - name: OAUTH2_PROXY_COOKIE_SECRET
-          valueFrom:
-            secretKeyRef:
-              name:  oauth2-proxy
-              key: cookie-secret
         ports:
           - containerPort: 4180
             name: http

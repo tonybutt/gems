@@ -4,6 +4,8 @@
 # namespace: oauth2-proxy
 # release-name: oauth2-proxy
 config:
+  existingSecret: oauth2-proxy-secrets
+  requiredSecretKeys: []
   configFile: |-
     provider = "oidc"
     oidc_issuer_url = "https://sso.abutt.dev/oauth2/openid/oauth2-proxy"
