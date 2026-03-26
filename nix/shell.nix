@@ -110,6 +110,9 @@ pkgs.mkShell {
       # Cloudflare
       cloudflared
 
+      # Identity
+      kanidm_1_9
+
       # Custom packages
       packages.render-helm
       packages.sops-reencrypt
@@ -133,6 +136,8 @@ pkgs.mkShell {
 
   env = {
     TALOSCONFIG = "talos/gen/talosconfig";
+    KANIDM_URL = "https://sso.abutt.dev";
+    KANIDM_VERIFY_CA = "true";
   };
 
   shellHook = ''
