@@ -101,6 +101,9 @@ talosctl kubeconfig \
   -n "$FIRST_MASTER_IP" \
   --force
 
+echo "Applying Gateway API CRDs..."
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml
+
 echo "Applying Cilium CNI..."
 kubectl apply -f infrastructure/controllers/cilium/manifests/cilium.yaml
 
