@@ -15,6 +15,10 @@ spec:
       labels:
         app: kanidm
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: kanidm
           image: kanidm/server:1.9.2
@@ -44,12 +48,14 @@ spec:
         - name: config
           configMap:
             name: kanidm-config
+            defaultMode: 0440
             items:
               - key: config.toml
                 path: server.toml
         - name: certs
           secret:
             secretName: kanidm-tls
+            defaultMode: 0440
   volumeClaimTemplates:
     - metadata:
         name: data
