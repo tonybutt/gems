@@ -54,7 +54,7 @@ metadata:
   name: oauth2-proxy
   namespace: oauth2-proxy
 data:
-  oauth2_proxy.cfg: "provider = \"oidc\"\noidc_issuer_url = \"https://sso.abutt.dev/oauth2/openid/oauth2-proxy\"\nemail_domains = [ \"*\" ]\nclient_id = \"oauth2-proxy\"\ncode_challenge_method = \"S256\"\nclient_secret_file = \"/run/secrets/client-secret\"\ncookie_secret_file = \"/run/secrets/cookie-secret\"\ncookie_secure = true\ncookie_samesite = \"lax\"\ncookie_httponly = true\ncookie_expire = \"168h\"\ncookie_refresh = \"1h\"\nreverse_proxy = true\nset_xauthrequest = true\nset_authorization_header = true\npass_access_token = true\npass_user_headers = true\nskip_auth_routes = [\n  \"^/health\",\n  \"^/ready\",\n  \"^/metrics\"\n]\nupstreams = [ \"http://valentines.valentines.svc.cluster.local:80\" ]\nwhitelist_domains = [ \".abutt.dev\" ]"
+  oauth2_proxy.cfg: "provider = \"oidc\"\noidc_issuer_url = \"https://sso.abutt.dev/oauth2/openid/oauth2-proxy\"\nemail_domains = [ \"*\" ]\nclient_id = \"oauth2-proxy\"\ncode_challenge_method = \"S256\"\nclient_secret_file = \"/run/secrets/client-secret\"\ncookie_secret_file = \"/run/secrets/cookie-secret\"\ncookie_secure = true\ncookie_samesite = \"lax\"\ncookie_httponly = true\ncookie_expire = \"168h\"\ncookie_refresh = \"1h\"\npass_access_token = true\npass_user_headers = true\nskip_auth_routes = [\n  \"^/health\",\n  \"^/ready\",\n  \"^/metrics\"\n]\nupstreams = [ \"http://valentines.valentines.svc.cluster.local:80\" ]\nwhitelist_domains = [ \".abutt.dev\" ]"
 ---
 # Source: oauth2-proxy/templates/service.yaml
 apiVersion: v1
@@ -113,7 +113,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 5c59d0ecaa35338a8583f7ec6a8f2c52360739be7f35505fe65237f7b21bdf9b
+        checksum/config: 3c70a0e98fcf616860f3c0b0991688e1973ea0999b858a817c678892663dfdca
         checksum/secret: 9eb46bbdefd5cf844a2c4965b1241a7177addaa7c07789e7873ccda6b0104111
         checksum/google-secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         checksum/redis-secret: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
