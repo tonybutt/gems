@@ -7,8 +7,6 @@ resources:
   - statefulset.yaml
   - service.yaml
   - tlsroute.yaml
-generatorOptions:
-  disableNameSuffixHash: true
 configMapGenerator:
   - name: kanidm-config
     files:
