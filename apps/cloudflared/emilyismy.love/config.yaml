@@ -1,5 +1,3 @@
-tunnel: valentines
-credentials-file: /etc/cloudflared/creds/credentials.json
 metrics: 0.0.0.0:2000
 no-autoupdate: true
 ingress:

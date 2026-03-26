@@ -13,6 +13,6 @@ configMapGenerator:
     files:
       - config.yaml
 secretGenerator:
-  - name: tunnel-credentials
-    files:
-      - credentials.json=secrets/tunnel-credentials.encrypted.json
+  - name: tunnel-token
+    envs:
+      - secrets/token.encrypted.env

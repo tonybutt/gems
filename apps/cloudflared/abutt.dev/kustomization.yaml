@@ -13,32 +13,6 @@ configMapGenerator:
     files:
       - config.yaml
 secretGenerator:
-  - name: tunnel-origin-cert
-    files:
-      - cert.pem=secrets/cert.encrypted.pem
-  - name: tunnel-credentials
-    files:
-      - credentials.json=secrets/228fd238-cb69-4336-82bf-f6e628dcdbda.encrypted.json
-patches:
-  - target:
-      kind: Deployment
-      name: cloudflared
-    patch: |
-      - op: add
-        path: /spec/template/spec/containers/0/args/3
-        value: --origincert
-      - op: add
-        path: /spec/template/spec/containers/0/args/4
-        value: /etc/cloudflared/certs/cert.pem
-      - op: add
-        path: /spec/template/spec/containers/0/volumeMounts/-
-        value:
-          name: cert
-          mountPath: /etc/cloudflared/certs
-          readOnly: true
-      - op: add
-        path: /spec/template/spec/volumes/-
-        value:
-          name: cert
-          secret:
-            secretName: tunnel-origin-cert
+  - name: tunnel-token
+    envs:
+      - secrets/token.encrypted.env

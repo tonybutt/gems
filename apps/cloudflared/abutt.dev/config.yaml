@@ -1,7 +1,3 @@
-# Name of the tunnel you want to run
-tunnel: gems
-credentials-file: /etc/cloudflared/creds/credentials.json
-# Serves the metrics server under /metrics and the readiness server under /ready
 metrics: 0.0.0.0:2000
 no-autoupdate: true
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/ingress
@@ -12,5 +8,4 @@ ingress:
     service: http://blog.blog.svc.cluster.local:80
   - hostname: "*.abutt.dev"
     service: http://cilium-gateway-cloudflare-tunnel.default.svc.cluster.local:80
-  # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
   - service: http_status:503
