@@ -23,7 +23,7 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /data/server.toml
-              subPath: config.toml
+              subPath: server.toml
               readOnly: true
             - name: certs
               mountPath: /certs
@@ -31,23 +31,22 @@ spec:
             - name: data
               mountPath: /data
           readinessProbe:
-            httpGet:
-              path: /status
-              port: 8443
-              scheme: HTTPS
+            exec:
+              command: ["/sbin/kanidmd", "healthcheck"]
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
-            httpGet:
-              path: /status
-              port: 8443
-              scheme: HTTPS
+            exec:
+              command: ["/sbin/kanidmd", "healthcheck"]
             initialDelaySeconds: 10
             periodSeconds: 30
       volumes:
         - name: config
           configMap:
             name: kanidm-config
+            items:
+              - key: config.toml
+                path: server.toml
         - name: certs
           secret:
             secretName: kanidm-tls
