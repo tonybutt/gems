@@ -4,7 +4,7 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 1m0s
+  interval: 30s
   ref:
     branch: main
   url: https://github.com/tonybutt/gems.git
@@ -15,7 +15,7 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 1m0s
+  interval: 30s
   path: ./clusters/gems
   prune: true
   decryption:
