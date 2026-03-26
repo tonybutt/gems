@@ -36,12 +36,12 @@ spec:
               mountPath: /data
           readinessProbe:
             exec:
-              command: ["/sbin/kanidmd", "healthcheck"]
+              command: ["/sbin/kanidmd", "scripting", "healthcheck"]
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             exec:
-              command: ["/sbin/kanidmd", "healthcheck"]
+              command: ["/sbin/kanidmd", "scripting", "healthcheck"]
             initialDelaySeconds: 10
             periodSeconds: 30
       volumes:
