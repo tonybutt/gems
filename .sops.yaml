@@ -45,3 +45,10 @@ creation_rules:
           - *gems-cluster
           - *lapnix
           - *atlas
+  - path_regex: .*\.encrypted$
+    key_groups:
+      - age:
+          - *tiberius
+          - *gems-cluster
+          - *lapnix
+          - *atlas

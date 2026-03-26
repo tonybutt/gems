@@ -5,13 +5,13 @@ kind: ServiceAccount
 metadata:
   labels:
     app: oauth2-proxy    
-    helm.sh/chart: oauth2-proxy-7.12.0
+    helm.sh/chart: oauth2-proxy-10.3.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: authentication-proxy
     app.kubernetes.io/part-of: oauth2-proxy
     app.kubernetes.io/name: oauth2-proxy
     app.kubernetes.io/instance: oauth2-proxy
-    app.kubernetes.io/version: "7.8.1"
+    app.kubernetes.io/version: "7.15.0"
   name: oauth2-proxy
   namespace: oauth2-proxy
 automountServiceAccountToken: true
@@ -22,20 +22,21 @@ kind: Secret
 metadata:
   labels:
     app: oauth2-proxy    
-    helm.sh/chart: oauth2-proxy-7.12.0
+    helm.sh/chart: oauth2-proxy-10.3.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: authentication-proxy
     app.kubernetes.io/part-of: oauth2-proxy
     app.kubernetes.io/name: oauth2-proxy
     app.kubernetes.io/instance: oauth2-proxy
-    app.kubernetes.io/version: "7.8.1"
+    app.kubernetes.io/version: "7.15.0"
   name: oauth2-proxy
   namespace: oauth2-proxy
 type: Opaque
 data:
-  cookie-secret: "Q0hBTkdFX01FX0dFTkVSQVRFX1NFQ1JFVA=="
-  client-secret: "Q0hBTkdFX01F"
-  client-id: "Q0hBTkdFX01F"
+  
+  cookie-secret: "WFhYWFhYWFhYWFhYWFhYWA=="
+  client-secret: "WFhYWFhYWFg="
+  client-id: "WFhYWFhYWA=="
 ---
 # Source: oauth2-proxy/templates/configmap.yaml
 apiVersion: v1
@@ -43,17 +44,17 @@ kind: ConfigMap
 metadata:
   labels:
     app: oauth2-proxy    
-    helm.sh/chart: oauth2-proxy-7.12.0
+    helm.sh/chart: oauth2-proxy-10.3.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: authentication-proxy
     app.kubernetes.io/part-of: oauth2-proxy
     app.kubernetes.io/name: oauth2-proxy
     app.kubernetes.io/instance: oauth2-proxy
-    app.kubernetes.io/version: "7.8.1"
+    app.kubernetes.io/version: "7.15.0"
   name: oauth2-proxy
   namespace: oauth2-proxy
 data:
-  oauth2_proxy.cfg: "# Kanidm OIDC provider (recommended - self-hosted)\nprovider = \"oidc\"\noidc_issuer_url = \"https://sso.abutt.dev\"\nemail_domains = [ \"*\" ]\n\n# Alternative: Google\n# provider = \"google\"\n# email_domains = [ \"yourdomain.com\" ]\n\n# Alternative: GitHub\n# provider = \"github\"\n# github_org = \"your-org\"\n\n# Cookie settings\ncookie_secure = true\ncookie_samesite = \"lax\"\ncookie_httponly = true\ncookie_expire = \"168h\"\ncookie_refresh = \"1h\"\n\n# For ext_authz mode - respond to auth requests\nreverse_proxy = true\nset_xauthrequest = true\nset_authorization_header = true\npass_access_token = true\npass_user_headers = true\n\n# Skip auth for these paths (health checks, etc)\nskip_auth_routes = [\n  \"^/health\",\n  \"^/ready\",\n  \"^/metrics\"\n]\n\n# Upstream for sign-in/callback (served by oauth2-proxy itself)\nupstreams = [ \"static://200\" ]\n\n# Whitelist your domain\nwhitelist_domains = [ \".abutt.dev\" ]"
+  oauth2_proxy.cfg: "provider = \"oidc\"\noidc_issuer_url = \"https://sso.abutt.dev\"\nemail_domains = [ \"*\" ]\nclient_id = \"oauth2-proxy\"\nclient_secret_file = \"/run/secrets/client-secret\"\ncookie_secret_file = \"/run/secrets/cookie-secret\"\ncookie_secure = true\ncookie_samesite = \"lax\"\ncookie_httponly = true\ncookie_expire = \"168h\"\ncookie_refresh = \"1h\"\nreverse_proxy = true\nset_xauthrequest = true\nset_authorization_header = true\npass_access_token = true\npass_user_headers = true\nskip_auth_routes = [\n  \"^/health\",\n  \"^/ready\",\n  \"^/metrics\"\n]\nupstreams = [ \"static://200\" ]\nwhitelist_domains = [ \".abutt.dev\" ]"
 ---
 # Source: oauth2-proxy/templates/service.yaml
 apiVersion: v1
@@ -61,19 +62,19 @@ kind: Service
 metadata:
   labels:
     app: oauth2-proxy    
-    helm.sh/chart: oauth2-proxy-7.12.0
+    helm.sh/chart: oauth2-proxy-10.3.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: authentication-proxy
     app.kubernetes.io/part-of: oauth2-proxy
     app.kubernetes.io/name: oauth2-proxy
     app.kubernetes.io/instance: oauth2-proxy
-    app.kubernetes.io/version: "7.8.1"
+    app.kubernetes.io/version: "7.15.0"
   name: oauth2-proxy
   namespace: oauth2-proxy
 spec:
   type: ClusterIP
   ports:
-    - port: 4180
+    - port: 80
       targetPort: http
       protocol: TCP
       appProtocol: http
@@ -93,13 +94,13 @@ kind: Deployment
 metadata:
   labels:
     app: oauth2-proxy    
-    helm.sh/chart: oauth2-proxy-7.12.0
+    helm.sh/chart: oauth2-proxy-10.3.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: authentication-proxy
     app.kubernetes.io/part-of: oauth2-proxy
     app.kubernetes.io/name: oauth2-proxy
     app.kubernetes.io/instance: oauth2-proxy
-    app.kubernetes.io/version: "7.8.1"
+    app.kubernetes.io/version: "7.15.0"
   name: oauth2-proxy
   namespace: oauth2-proxy
 spec:
@@ -112,26 +113,26 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f8607507d8e061222fe4485160dca23fc44be3bec5b014c4f3cb22996ad9071e
-        checksum/secret: 7a5478270660d5da1cc4733f0140351795382bccc90fcd0d54167814e010f56c
+        checksum/config: 500db3b0b305ea047134eadee8a87ea4f5305f126960c88552fd12b3739ce33b
+        checksum/secret: 9eb46bbdefd5cf844a2c4965b1241a7177addaa7c07789e7873ccda6b0104111
         checksum/google-secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         checksum/redis-secret: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
       labels:
         app: oauth2-proxy        
-        helm.sh/chart: oauth2-proxy-7.12.0
+        helm.sh/chart: oauth2-proxy-10.3.0
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: authentication-proxy
         app.kubernetes.io/part-of: oauth2-proxy
         app.kubernetes.io/name: oauth2-proxy
         app.kubernetes.io/instance: oauth2-proxy
-        app.kubernetes.io/version: "7.8.1"
+        app.kubernetes.io/version: "7.15.0"
     spec:
       serviceAccountName: oauth2-proxy
       enableServiceLinks: true
       automountServiceAccountToken: true
       containers:
       - name: oauth2-proxy
-        image: "quay.io/oauth2-proxy/oauth2-proxy:v7.8.1"
+        image: "quay.io/oauth2-proxy/oauth2-proxy:v7.15.0"
         imagePullPolicy: IfNotPresent
         args:
           - --http-address=0.0.0.0:4180
@@ -178,16 +179,14 @@ spec:
           successThreshold: 1
           periodSeconds: 10
         resources:
-          limits:
-            cpu: 100m
-            memory: 128Mi
-          requests:
-            cpu: 10m
-            memory: 64Mi
+          {}
         volumeMounts:
         - mountPath: /etc/oauth2_proxy/oauth2_proxy.cfg
           name: configmain
           subPath: oauth2_proxy.cfg
+        - mountPath: /run/secrets
+          name: secrets
+          readOnly: true
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -204,3 +203,6 @@ spec:
           defaultMode: 420
           name: oauth2-proxy
         name: configmain
+      - name: secrets
+        secret:
+          secretName: oauth2-proxy-secrets

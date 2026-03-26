@@ -1,0 +1,38 @@
+# chart: oauth2-proxy/oauth2-proxy
+# version: 10.3.0
+# repo: https://oauth2-proxy.github.io/manifests
+# namespace: oauth2-proxy
+# release-name: oauth2-proxy
+config:
+  configFile: |-
+    provider = "oidc"
+    oidc_issuer_url = "https://sso.abutt.dev"
+    email_domains = [ "*" ]
+    client_id = "oauth2-proxy"
+    client_secret_file = "/run/secrets/client-secret"
+    cookie_secret_file = "/run/secrets/cookie-secret"
+    cookie_secure = true
+    cookie_samesite = "lax"
+    cookie_httponly = true
+    cookie_expire = "168h"
+    cookie_refresh = "1h"
+    reverse_proxy = true
+    set_xauthrequest = true
+    set_authorization_header = true
+    pass_access_token = true
+    pass_user_headers = true
+    skip_auth_routes = [
+      "^/health",
+      "^/ready",
+      "^/metrics"
+    ]
+    upstreams = [ "static://200" ]
+    whitelist_domains = [ ".abutt.dev" ]
+extraVolumes:
+  - name: secrets
+    secret:
+      secretName: oauth2-proxy-secrets
+extraVolumeMounts:
+  - name: secrets
+    mountPath: /run/secrets
+    readOnly: true

@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: oauth2-proxy
+resources:
+  - ns.yaml
+  - manifests/oauth2-proxy.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+secretGenerator:
+  - name: oauth2-proxy-secrets
+    files:
+      - client-secret=secrets/client-secret.encrypted
+      - cookie-secret=secrets/cookie-secret.encrypted

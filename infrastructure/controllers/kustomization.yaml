@@ -6,3 +6,4 @@ resources:
   - reloader
   - openebs
   - cert-manager
+  - oauth2-proxy
