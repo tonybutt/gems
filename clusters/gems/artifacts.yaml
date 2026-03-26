@@ -1,0 +1,47 @@
+---
+apiVersion: source.extensions.fluxcd.io/v1beta1
+kind: ArtifactGenerator
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  sources:
+    - alias: monorepo
+      kind: GitRepository
+      name: flux-system
+  artifacts:
+    - name: infrastructure
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/infrastructure/**"
+          to: "@artifact/"
+    - name: app-blog
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/blog/**"
+          to: "@artifact/"
+    - name: app-cloudflared-abutt-dev
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/cloudflared/abutt.dev/**"
+          to: "@artifact/"
+    - name: app-cloudflared-emilyismy-love
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/cloudflared/emilyismy.love/**"
+          to: "@artifact/"
+    - name: app-kanidm
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/kanidm/**"
+          to: "@artifact/"
+    - name: app-valentines
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/valentines/**"
+          to: "@artifact/"
+    - name: app-jcu-site
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/jcu-site/**"
+          to: "@artifact/"

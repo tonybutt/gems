@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: jcu-site
+resources:
+  - ns.yaml
+  - gitrepository.yaml
+  - flux-kustomization.yaml
+  - imagerepository.yaml
+  - imagepolicy.yaml
+  - imageupdateautomation.yaml
+  - jcu-config.yaml
+  - secrets/jcu-site-deploy-key.encrypted.yaml
+  - secrets/ghcr-pull-secret.encrypted.yaml
+  - secrets/jcu-secrets.encrypted.yaml

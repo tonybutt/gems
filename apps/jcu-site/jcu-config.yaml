@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jcu-config
+data:
+  config.toml: |
+    listen_addr = "0.0.0.0:8080"
+    database_path = "/data/jcu.db"
+    static_dir = "/usr/share/web"
+    s3_bucket = "jcu-alumni-media"
+    s3_endpoint = "https://s3.gems.local"
+    s3_region = "us-east-1"

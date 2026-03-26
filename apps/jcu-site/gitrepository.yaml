@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: jcu-site
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: ssh://git@github.com/tonybutt/jcu-site
+  ref:
+    branch: main
+  secretRef:
+    name: jcu-site-deploy-key
