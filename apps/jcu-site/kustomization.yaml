@@ -9,6 +9,7 @@ resources:
   - imagepolicy.yaml
   - imageupdateautomation.yaml
   - jcu-config.yaml
+  - httproute.yaml
   - secrets/jcu-site-deploy-key.encrypted.yaml
   - secrets/ghcr-pull-secret.encrypted.yaml
   - secrets/jcu-secrets.encrypted.yaml
