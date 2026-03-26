@@ -5,8 +5,7 @@ origin = "https://sso.abutt.dev"
 tls_chain = "/certs/tls.crt"
 tls_key = "/certs/tls.key"
 db_path = "/data/kanidm.db"
-[http_client_address_info]
-strategy = "x-forward-for"
+http_client_address_info = "x-forward-for"
 
 [online_backup]
 path = "/data/backups/"
