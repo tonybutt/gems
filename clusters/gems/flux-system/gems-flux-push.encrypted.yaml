@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: gems-flux-push
+    namespace: flux-system
+data:
+    identity: ENC[AES256_GCM,data:lvUm4JwS7Ljpf6G0zuMDGDbi+e2LjWzL3+hQiw059OfATzpOj1QsDEnByV3C8inE9sxG1VlRPOfZM9dBl5RWPZzJVSB5g3tiO8k9bt9Zh3ACp+4x1DRd7opukAyDcEaTys5f5QALPHAcdgyPVNZxeV94yShYbqqlc5jlNPrU4VYS72H57ajxRYA3JogJNyRdsDaoTXjuTF6OAn/HdF+bNir6mLy+mrR9NmfnMArg0TAmwKPYARRMql76rEq2+GzmRP1EdAH2DE5jhzk5mWugQ6I599J5z4+ea/ohPYlJUAjPV3xqri4PYKxTE3aQKzkxs4M4Rvh9Co2LDjRiKZp5zR8MhSof/NoWoXulDH6/+u4CDjpxqglAuVEIgW75sEHYs5Fqf31e3eKvIwdS3ZsgQNlKy7UySlDgrFgtRRvxXVO5W++L5Rd8EUOLip6qvC0NUceaEmiArJX2gOuVqHohbEfNvaTNcwS2QFdWx1XzjgnYX7nD8Ym/1c1IYJ2Qv5iRZVmPDXrmYUxP0jMmQ6KQSknHXss/HDx1Xro92dVc8T2j2L8fhUuYBpDLbAIb9otb+7lUsiQ0LMtmds+iHSp6fDFdybNcngOgCuOo7rM/Tn6NF1RFDSlLiJmeMcVV8eK5YLQyMj7CUfilK7xE7LfCLb0SDva1iwZQMV/GCFTVrdH/yF+PVLC5SuWpgjCBg0G7iKwvq2hqmM1Ixd69bnf6rWE7JfQ=,iv:qWtW1g1sHmulbMryIoNVfRysxpc0tD+eIJUvQeHo3nQ=,tag:xcBDbfAXVuM9OhYnnWiPHw==,type:str]
+    known_hosts: ENC[AES256_GCM,data:XHhliWEmxyh2yEw5XruxaF2lzZRZENumZGWBG273b/anPeeES1hetHuDAK/tsXJBljxy99ZgXsrMlBAP95OeuqpD6NgOEpW9BG7KcMpZcY2NiRaO4n6ApC7BWbkvgXXhXTcRkI/ELvElIFL2OyvtL6t25iFx+uS+KhEnXVKA8CEaOmc+G5xlcfZzHM8B2hoYgZfQZ808QZprmD6tOUtj7dLWKptjcDX2wRabo8mgsjvI4URbDfFGFpFR4qcxN/mvYY78FwY0b9pac8KzrJizsVO0CjnRBx2Pv65TMl7OB0SkASHh2S2FyrUwB21QVPRmZsHSvE5vN6PHLUmdHtYgsuBjL/AJgyTVWCScrlhY4v6oX9z8gtxvVxg1LZ5fhC5OY25AWD/bs08WjaaqSsD1IHYgRohNPRij4c6Z02jEOBUdHl8Ci7f8IBSNTFDwxLpZDeYjI7n739nQVuMrprOusC/eZ2+cBbNO9d7hEEtWHYr3KKqAhqdR29LlIRZRr5smMAG7cKXwDojLTyWuHx7jifIxhGqpVr8VKGKseOQrkHlOeyoWBd8BCzyVntwjY3tdbu1wTbgXXGXpU/khWefW2B/FjdVs1JYmkAVexp3MryUs3cYw0aXKhIBwuq9lvsfA+TfqecLEfotOOEvDaUfM39rkSx1LCCrNkwJH8aXy3p32OQAmZpWpT0XV6+rZnMnu41GPx+9SM3Txkr/VHTN+Wi3AWy4WmBbHXaTiEsTZUnNOmYlj31bmVIMwyVY42cCqsjx4ibsu3SdUhdaDqGXKs5QKSfIoRnCqalON+ooE/RzLkeCjBA/wC6NK1aYkmyCOYHV8hjByiy4+xqueNRMxNDQKaYs0xEsGgOdWm4sfbINdHZbhDbD36rHkMdoEIF/3IHjO3Bu7WqagN4RQHBKrW8A4Kd18xbUZB7NudHrnmAx/WcOIgXyn0tNkTQtzeltUQ8Roq0gebbMo8WGiz74y6W8dnUbYmcee47YgxF8xdb1oDpZFY6+aGVsYT1sHu3pkoZPdVK7YCu51zRlbFZrPPBYBz41DF0GCLbOneU1EX1epjrnCQMvhh//O+i2lddBjTEup1AgwPd6kLjUHtUVx4svI0rxj0bPvJAAOossd5+nbeOThZjvssSOg+DO4t/cIZkFi7MSNjhcN1sUIjVIfYvHOymJbXigoTj6dzK5znV0yMA/97diToD7D8kslQkI6E6J4BOFyDlzBM+KEy/UORoYAsnkgfE7rTBs0ju4xBwdvQZhMuYKZyuNvG7NFqTekK3/03AWdUc6Q6PtzUMMUEiqM+mG+OOrnQeit9d2MhRS3a+Lmkl5EykpGYtJYLi47L3vMlGwUOELn5h8e9AJWZ/nuWiP6mGgQMSOx0GLoezwQckZztXowPS9khg34jlrjAedadq8c8QSwZti5ky8OxWyLKL27KziB+VwI8juBtYK3svO9J1egJbcIml980G6Z14zmYLuHzQtDmY4F0s0nWSSUhSf2sayMZtzV33gk3SJJ9uuhXHxU1aEX13YAiy66xNu2sU18beVgNcRi2GIb2pBghJWCy5+o9eFKPlWnw/HKyUHkv8tzLLMcoC+r56uI+kT9/j+m0okRU3FetBX/QlvP6D4S5/8ibWDzCXcq0hcQ27IkJvTv5Qx9ykNj5U0IZICmFGWmHiWOcGFvPLHrUMwKJ9oLc5muC5ZoWau/m//RTdqQx0YLMEQpcxQxS3thhbuluNrI8mKwM66Ejhy+WWtDiIDz+jC/,iv:bxyGfY6KE7qLI3DCFrAdjDdj+JUXjlXk+vblYJ4qW1M=,tag:pXmobk7/IhKosWcLj81Iog==,type:str]
+sops:
+    age:
+        - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICnQDGTR3J244BlVZ3u0I9l476XRxlv0DdmREzTku3Ib abutt@tiberius.com
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGFJNmU1ZyA1UnFU
+            TkJiNjVuQkprWjU4VmlCQ0pITzd1bFdLOS9ZV2xaMmtRdzFhNHk0Cnl5M1hRRW5z
+            OWtZQ3gzeTgvOU45bWliM0xocFd3dHplcnlyZkRvNGVTYncKLS0tIE43dEJSWGp3
+            ODF2MTUyTEFyV1NmbnVNbHExV2NjcTNBL2tkUllkR2F5WTQKcmUSLIfp3u/96v2Y
+            ZAdi+c7pPvP/lqX9AWK6VjDPz6fDlCeHzX5V1E00yhTzJNZccsgDt6IzpO7NCTpc
+            VrjIcA==
+            -----END AGE ENCRYPTED FILE-----
+        - recipient: age1x43sjuly4kjrvmn07f8r77psgxa9f49d2egcmgl4aqkl7nmnafzqs56wzq
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBib2JYYklVQjdyYTEzNGQ4
+            d2NJeUxTbk5vWWVPcEFaSk85cEZndUxXQXpvCnQxemRLWFd2VUZ3VG45M1BYUE5l
+            Rk1WUDhEeGhvb3B4YS9Hd3JCV3ROZDAKLS0tIDlITWVFZSs2VjNOOTgvRlRvOC9u
+            MzU1MnFRYUhYQ3lGZDNwdVRHVm56ZHcKfTnmGuC+k5fsQgvmuxiKgEaHX8psn6uq
+            v9m9+jceCu3QT4I2KBaeqfuqDlenmr8NHVWnBIelz2jVhkgV2sAuhg==
+            -----END AGE ENCRYPTED FILE-----
+        - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYkXD5kuITfXNUgU+yzirklzKXKRlT5ZKYwKo03lzzz abutt@tiberius.com
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IGg2RGpKdyByZm1N
+            ZzJtbHhGU0M0SHJLSHdBNk9zRndFdFRYQzhkUllrbWFjbmpNMWhZCnBQN0FBKy95
+            YkFRbm8wSS9iM2hLeHlPUDd0dU9TWVF4NThkSHlNNExCNDAKLS0tIDM0aVFkektW
+            RkFQc1NaTmJqK21ZY3piUURrNUhHUUkrS0QxdEtmaGVCaGcKtJaGVLQ1q1nqWH9q
+            NtmSJMSC7N268IkocKmg05Zix/oioKdEVSdLqpB8YK9zv5KAJ30xvG3RNsiKJQZ8
+            VZshTA==
+            -----END AGE ENCRYPTED FILE-----
+        - recipient: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII+cqj41D3k8Dk9Bz4l/06XVkkxMJIpg1orvuf56/Hme
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IHNzaC1lZDI1NTE5IDNSbC95dyBOSnE0
+            VjhteW41N3RVNzRYZjdlZXZ1RE5hMHdtMVlkOXN2NzZYOGVYa1I0ClB2ZWN3dEpP
+            UjN3eURtTnhhN1F1MmF5eGtBbzVHNHdKNllQT0U0OElMdFEKLS0tIGtDZzRJS1J5
+            bkJLdUFaZS9PWGVuMGRPVUMyRmZTUjFJKzArVUpmbHdYUFkK0J3lmwZ0Jh/IknNs
+            xxEymymY/HLqC975wKUcMhngKiJ9qQkXWi6Bp/LNwg4ij76VspMVY9Uh5VQ+/FLK
+            XONCvg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-03-27T02:38:37Z"
+    mac: ENC[AES256_GCM,data:0IfklYVZOKhv/DoaNq/IjF2nyj7FxJBOA/JRzcRiCLL5NN0CaJi5eh1m2jnoRw2zFV0+Blq7V4PFkfJD5s6l4NezReAfyPRKpLR/GJ1Oy9kn3YYgKQJICw27uVkp/bU+c3jjSy8TOLfNgMCwBMjLAtxAMdWzFuVCMEz1riTlU+w=,iv:l5IJKpD2lYJvOFzSEqvxq925SuztbPM4GxGo+Tkcpg4=,tag:cBDpi9t5cGna8LqAhKWrog==,type:str]
+    encrypted_regex: ^(stringData|data)$
+    version: 3.12.2

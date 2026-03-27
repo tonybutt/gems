@@ -1,3 +1,16 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: gems-push
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: ssh://git@github.com/tonybutt/gems
+  ref:
+    branch: main
+  secretRef:
+    name: gems-flux-push
+---
 apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
@@ -6,7 +19,7 @@ spec:
   interval: 1m
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: gems-push
     namespace: flux-system
   git:
     checkout:

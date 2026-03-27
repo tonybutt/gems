@@ -4,3 +4,4 @@ namespace: flux-system
 resources:
   - gotk-components.yaml
   - gotk-sync.yaml
+  - gems-flux-push.encrypted.yaml
