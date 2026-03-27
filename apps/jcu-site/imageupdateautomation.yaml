@@ -2,12 +2,12 @@ apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
   name: jcu-site
+  namespace: flux-system
 spec:
   interval: 1m
   sourceRef:
     kind: GitRepository
     name: gems-push
-    namespace: flux-system
   git:
     checkout:
       ref:
@@ -21,3 +21,5 @@ spec:
       branch: main
   update:
     path: ./apps/jcu-site
+  policyRef:
+    namespace: jcu-site
