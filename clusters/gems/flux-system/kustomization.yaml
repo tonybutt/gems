@@ -6,3 +6,4 @@ resources:
   - gotk-sync.yaml
   - gems-flux-push.encrypted.yaml
   - gems-push-gitrepository.yaml
+  - jcu-site-imageupdateautomation.yaml

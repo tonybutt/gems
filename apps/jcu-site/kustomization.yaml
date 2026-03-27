@@ -7,7 +7,6 @@ resources:
   - flux-kustomization.yaml
   - imagerepository.yaml
   - imagepolicy.yaml
-  - imageupdateautomation.yaml
   - jcu-config.yaml
   - httproute.yaml
   - secrets/jcu-site-deploy-key.encrypted.yaml
