@@ -11,3 +11,6 @@ spec:
   path: ./deploy
   prune: true
   wait: true
+  images:
+    - name: ghcr.io/tonybutt/jcu-site
+      newTag: 20260327020145 # {"$imagepolicy": "jcu-site:jcu-site:tag"}

@@ -6,7 +6,8 @@ spec:
   interval: 1m
   sourceRef:
     kind: GitRepository
-    name: jcu-site
+    name: flux-system
+    namespace: flux-system
   git:
     checkout:
       ref:
@@ -15,8 +16,8 @@ spec:
       author:
         name: fluxcdbot
         email: fluxcdbot@users.noreply.github.com
-      messageTemplate: "chore: {{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
+      messageTemplate: "chore(jcu-site): {{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
     push:
       branch: main
   update:
-    path: ./deploy
+    path: ./apps/jcu-site
