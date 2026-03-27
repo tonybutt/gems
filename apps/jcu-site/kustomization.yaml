@@ -5,8 +5,6 @@ resources:
   - ns.yaml
   - gitrepository.yaml
   - flux-kustomization.yaml
-  - imagerepository.yaml
-  - imagepolicy.yaml
   - jcu-config.yaml
   - httproute.yaml
   - secrets/jcu-site-deploy-key.encrypted.yaml

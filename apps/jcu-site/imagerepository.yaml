@@ -1,9 +1,0 @@
-apiVersion: image.toolkit.fluxcd.io/v1
-kind: ImageRepository
-metadata:
-  name: jcu-site
-spec:
-  image: ghcr.io/tonybutt/jcu-site
-  interval: 1m
-  secretRef:
-    name: ghcr-pull-secret

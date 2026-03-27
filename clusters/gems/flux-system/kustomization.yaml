@@ -5,5 +5,7 @@ resources:
   - gotk-components.yaml
   - gotk-sync.yaml
   - gems-flux-push.encrypted.yaml
+  - ghcr-pull-secret.encrypted.yaml
   - gems-push-gitrepository.yaml
+  - jcu-site-image-automation.yaml
   - jcu-site-imageupdateautomation.yaml

@@ -1,0 +1,26 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: jcu-site
+  namespace: flux-system
+spec:
+  image: ghcr.io/tonybutt/jcu-site
+  interval: 1m
+  secretRef:
+    name: ghcr-pull-secret
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: jcu-site
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: jcu-site
+  filterTags:
+    pattern: '^(?P<ts>\d{14})$'
+    extract: "$ts"
+  policy:
+    numerical:
+      order: asc
