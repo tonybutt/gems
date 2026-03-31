@@ -13,4 +13,4 @@ spec:
   wait: true
   images:
     - name: ghcr.io/tonybutt/jcu-site
-      newTag: "20260330221139" # {"$imagepolicy": "flux-system:jcu-site:tag"}
+      newTag: "20260331020843" # {"$imagepolicy": "flux-system:jcu-site:tag"}
