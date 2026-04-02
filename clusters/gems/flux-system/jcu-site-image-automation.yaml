@@ -19,7 +19,7 @@ spec:
   imageRepositoryRef:
     name: jcu-site
   filterTags:
-    pattern: '^(?P<ts>\d{14})$'
+    pattern: '^(?P<ts>\d{14})-[a-f0-9]+$'
     extract: "$ts"
   policy:
     numerical:
