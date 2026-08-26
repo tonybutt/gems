@@ -36,11 +36,15 @@ cgroup:
   hostRoot: /sys/fs/cgroup
 k8sServiceHost: localhost
 k8sServicePort: 7445
+# Hubble disabled for now: hubble-relay has been crashlooping (DNS timeouts
+# resolving hubble-peer), failing the Flux infrastructure-controllers health
+# check and blocking downstream reconciliation.
 hubble:
-  tls:
-    auto:
-      method: cronJob
-  relay:
-    enabled: true
-  ui:
-    enabled: false
+  enabled: false
+  # tls:
+  #   auto:
+  #     method: cronJob
+  # relay:
+  #   enabled: true
+  # ui:
+  #   enabled: false
