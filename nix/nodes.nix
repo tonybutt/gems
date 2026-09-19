@@ -2,7 +2,7 @@
 {
   cluster = {
     name = "gems";
-    endpoint = "https://192.168.86.250:6443";
+    endpoint = "https://192.168.86.69:6443";
     controlPlaneEndpoint = "192.168.86.250";
   };
 
@@ -36,7 +36,7 @@
   nodes = [
     {
       name = "gem-master-0";
-      ip = "192.168.86.250";
+      ip = "192.168.86.23";
       type = "controlplane";
     }
     {
