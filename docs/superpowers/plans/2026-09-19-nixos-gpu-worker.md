@@ -384,7 +384,7 @@ Expected: `subject=O=kubernetes`, then `Wrote .../talos/ca.crt and .../secrets/g
 Run:
 
 ```bash
-age -d -i tmp/etc/ssh/ssh_host_ed25519_key secrets/gem-gpu-0-bootstrap-kubeconfig.age | nix shell nixpkgs#yq-go -c yq '.clusters[0].cluster.server, .users[0].user.token' | cut -c1-24
+age -d -i tmp/etc/ssh/ssh_host_ed25519_key secrets/gem-gpu-0-bootstrap-kubeconfig.age | nix shell nixpkgs#yq-go -c yq '.clusters[0].cluster.server, .users[0].user.token' | cut -c1-12
 kubectl -n kube-system get secret bootstrap-token-2wffic -o jsonpath='{.data.token-id}' | base64 -d; echo
 ```
 
