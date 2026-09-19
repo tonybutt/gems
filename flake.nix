@@ -48,6 +48,12 @@
 
       packages = import ./nix/packages.nix { inherit pkgs; };
       nodes = import ./nix/nodes.nix;
+      gpuNode = nixpkgs.lib.findFirst (n: n.name == "gem-gpu-0") {
+        name = "gem-gpu-0";
+        ip = "0.0.0.0";
+        type = "worker";
+        os = "nixos";
+      } nodes.nodes;
       treefmt = import ./nix/treefmt.nix { inherit pkgs treefmt-nix; };
       pre-commit = import ./nix/pre-commit.nix {
         inherit
@@ -79,10 +85,23 @@
         git-hooks = pre-commit;
       };
 
+      nixosConfigurations.gem-gpu-0 = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit nodes;
+          node = gpuNode;
+        };
+        modules = [
+          disko.nixosModules.disko
+          agenix.nixosModules.default
+          ./nix/gem-gpu-0.nix
+        ];
+      };
+
       checks.${system} = {
         formatting = treefmt.config.build.check self;
         pre-commit = pre-commit;
         talos-configs = import ./nix/talos-configs-check.nix { inherit pkgs nodes; };
+        gem-gpu-0 = self.nixosConfigurations.gem-gpu-0.config.system.build.toplevel;
       };
     };
 }
