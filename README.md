@@ -214,6 +214,8 @@ render-helm --all
 | -------------------------- | --------------------------------------------------- |
 | `apply-<node>`             | Apply config to node (`--insecure` for first apply) |
 | `upgrade-<node> <version>` | Upgrade Talos on node                               |
+| `apply-gem-gpu-0`          | Deploy the NixOS GPU worker with deploy-rs          |
+| `talos-gen join-config`    | Emit the NixOS worker's join credential and CA      |
 | `talos-gen secrets`        | Generate new cluster secrets                        |
 | `talos-gen configs`        | Generate node configs                               |
 | `talos-iso`                | Download Talos ISO with extensions                  |
