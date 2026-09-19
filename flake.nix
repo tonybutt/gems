@@ -78,6 +78,7 @@
           talos-iso
           ;
         default = packages.render-helm;
+        installer-iso = self.nixosConfigurations.installer.config.system.build.isoImage;
       };
 
       devShells.${system}.default = import ./nix/shell.nix {
@@ -85,16 +86,19 @@
         git-hooks = pre-commit;
       };
 
-      nixosConfigurations.gem-gpu-0 = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit nodes;
-          node = gpuNode;
+      nixosConfigurations = {
+        gem-gpu-0 = nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit nodes;
+            node = gpuNode;
+          };
+          modules = [
+            disko.nixosModules.disko
+            agenix.nixosModules.default
+            ./nix/gem-gpu-0.nix
+          ];
         };
-        modules = [
-          disko.nixosModules.disko
-          agenix.nixosModules.default
-          ./nix/gem-gpu-0.nix
-        ];
+        installer = nixpkgs.lib.nixosSystem { modules = [ ./nix/installer-iso.nix ]; };
       };
 
       checks.${system} = {
