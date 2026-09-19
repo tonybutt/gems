@@ -70,6 +70,11 @@ in
       gnused
       coreutils
       git
+      yq-go
+      jq
+      age
+      nix
+      openssl
     ];
     text = talosGenScript;
   };

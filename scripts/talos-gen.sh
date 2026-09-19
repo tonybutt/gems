@@ -14,6 +14,7 @@ usage() {
   echo "Commands:"
   echo "  secrets     Generate new cluster secrets (creates talos/secrets.yaml)"
   echo "  configs     Generate per-node configs (talos/gen/<node>.yaml)"
+  echo "  join-config <node>  Emit talos/ca.crt and secrets/<node>-bootstrap-kubeconfig.age"
   echo ""
   echo "Examples:"
   echo "  talos-gen secrets    # Create new encrypted secrets file"
@@ -122,6 +123,63 @@ generate_configs() {
   echo "  $GEN_DIR/talosconfig"
 }
 
+generate_join_config() {
+  local node="$1"
+  local secrets_file="$TALOS_DIR/secrets.yaml"
+  local recipients_file="$REPO_ROOT/secrets/secrets.nix"
+  local out_file="$REPO_ROOT/secrets/${node}-bootstrap-kubeconfig.age"
+  local ca_file="$TALOS_DIR/ca.crt"
+
+  if [ ! -f "$secrets_file" ]; then
+    echo "Error: $secrets_file not found. Run 'talos-gen secrets' first."
+    return 1
+  fi
+  if [ ! -f "$recipients_file" ]; then
+    echo "Error: $recipients_file not found."
+    return 1
+  fi
+
+  local plain
+  plain="$(mktemp)"
+  trap 'rm -f "$plain"' RETURN
+  sops -d "$secrets_file" > "$plain"
+
+  local ca_b64 token
+  ca_b64="$(yq '.certs.k8s.crt' "$plain")"
+  token="$(yq '.secrets.bootstraptoken' "$plain")"
+
+  echo "$ca_b64" | base64 -d > "$ca_file"
+  openssl x509 -in "$ca_file" -noout -subject
+
+  local -a age_args=()
+  local recipient
+  while IFS= read -r recipient; do
+    age_args+=(-r "$recipient")
+  done < <(nix eval --json -f "$recipients_file" "\"${node}-bootstrap-kubeconfig.age\".publicKeys" | jq -r '.[]')
+
+  age "${age_args[@]}" -o "$out_file" <<EOF
+apiVersion: v1
+kind: Config
+clusters:
+  - name: $CLUSTER_NAME
+    cluster:
+      server: https://127.0.0.1:7445
+      certificate-authority-data: $ca_b64
+users:
+  - name: tls-bootstrap-token-user
+    user:
+      token: $token
+contexts:
+  - name: tls-bootstrap-token-user@$CLUSTER_NAME
+    context:
+      cluster: $CLUSTER_NAME
+      user: tls-bootstrap-token-user
+current-context: tls-bootstrap-token-user@$CLUSTER_NAME
+EOF
+
+  echo "Wrote $ca_file and $out_file"
+}
+
 # Main
 if [ $# -eq 0 ]; then
   usage
@@ -136,6 +194,13 @@ case "$COMMAND" in
     ;;
   configs)
     generate_configs
+    ;;
+  join-config)
+    if [ $# -lt 2 ]; then
+      echo "Usage: talos-gen join-config <node>"
+      exit 1
+    fi
+    generate_join_config "$2"
     ;;
   -h|--help)
     usage

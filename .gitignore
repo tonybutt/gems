@@ -36,3 +36,6 @@ result
 # Claude Code
 .claude/
 .age
+
+# Pre-install host key tree for nixos-anywhere --extra-files
+tmp/
