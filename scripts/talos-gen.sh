@@ -139,9 +139,8 @@ generate_join_config() {
     return 1
   fi
 
-  local plain
   plain="$(mktemp)"
-  trap 'rm -f "$plain"' RETURN
+  trap 'rm -f "$plain"' EXIT
   sops -d "$secrets_file" > "$plain"
 
   local ca_b64 token
