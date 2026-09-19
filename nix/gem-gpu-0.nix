@@ -1,4 +1,9 @@
-{ node, ... }:
+{
+  config,
+  lib,
+  node,
+  ...
+}:
 let
   yubikeys = [
     "no-touch-required sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIO9ZH1VvOc2+1tAkzQzNwhyT+LT6wCBmt9gP2yeH8g+oAAAABHNzaDo= abutt@tiberius.com"
@@ -73,6 +78,48 @@ in
       };
     };
   };
+
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "nvidia-x11"
+      "nvidia-settings"
+      "nvidia-persistenced"
+    ];
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.graphics.enable = true;
+  hardware.nvidia = {
+    package = config.boot.kernelPackages.nvidiaPackages.production;
+    open = true;
+    nvidiaPersistenced = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+  };
+  hardware.nvidia-container-toolkit.enable = true;
+
+  virtualisation.containerd = {
+    enable = true;
+    settings.plugins."io.containerd.grpc.v1.cri" = {
+      enable_cdi = true;
+      cdi_spec_dirs = [
+        "/etc/cdi"
+        "/var/run/cdi"
+      ];
+      cni = {
+        bin_dir = "/opt/cni/bin";
+        conf_dir = "/etc/cni/net.d";
+      };
+      containerd.runtimes.runc.options.SystemdCgroup = true;
+    };
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /opt/cni/bin 0755 root root -"
+    "d /etc/cni/net.d 0755 root root -"
+    "d /var/lib/kubelet 0700 root root -"
+    "d /var/openebs/local 0755 root root -"
+  ];
 
   networking = {
     hostName = node.name;
