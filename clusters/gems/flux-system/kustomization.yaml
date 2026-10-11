@@ -9,3 +9,5 @@ resources:
   - gems-push-gitrepository.yaml
   - jcu-site-image-automation.yaml
   - jcu-site-imageupdateautomation.yaml
+  - task-api-image-automation.yaml
+  - task-api-imageupdateautomation.yaml

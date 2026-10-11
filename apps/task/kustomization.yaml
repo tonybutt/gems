@@ -33,4 +33,5 @@ secretGenerator:
       - secrets/task-api.encrypted.env
 images:
   - name: ghcr.io/tonybutt/task-api
-    digest: sha256:cb5299e32323046022c3a8dcdb2ff22c85a82e384302d28fca66ee7cebfe618c
+    newTag: aad4ce4 # {"$imagepolicy": "flux-system:task-api:tag"}
+    digest: sha256:cb5299e32323046022c3a8dcdb2ff22c85a82e384302d28fca66ee7cebfe618c # {"$imagepolicy": "flux-system:task-api:digest"}
