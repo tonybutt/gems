@@ -6,4 +6,5 @@ resources:
   - cloudflared/emilyismy.love
   - kanidm
   - jcu-site
+  - task
   - valentines

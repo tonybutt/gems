@@ -1,0 +1,12 @@
+[server]
+listen_addr = "0.0.0.0:3000"
+
+[database]
+url = "sqlite:/data/task.db"
+
+[log]
+filter = "api=info,tower_http=info"
+format = "json"
+
+[auth]
+cookie_secure = true

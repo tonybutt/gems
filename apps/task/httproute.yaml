@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: task-api
+spec:
+  parentRefs:
+    - name: cloudflare-tunnel
+      namespace: default
+      sectionName: https-task
+  hostnames:
+    - task.abutt.dev
+  rules:
+    - backendRefs:
+        - name: task-api
+          port: 80

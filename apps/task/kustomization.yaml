@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: task
+labels:
+  - includeSelectors: false
+    includeTemplates: true
+    pairs:
+      app.kubernetes.io/name: task
+      app.kubernetes.io/part-of: task
+      app.kubernetes.io/managed-by: flux
+resources:
+  - ns.yaml
+  - serviceaccount.yaml
+  - persistentvolumeclaim.yaml
+  - deployment.yaml
+  - service.yaml
+  - certificate.yaml
+  - referencegrant.yaml
+  - httproute.yaml
+  - ciliumnetworkpolicy.yaml
+  - secrets/ghcr-pull-secret.encrypted.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    reloader.stakater.com/auto: "true"
+configMapGenerator:
+  - name: task-api-config
+    files:
+      - config.toml
+secretGenerator:
+  - name: task-api
+    envs:
+      - secrets/task-api.encrypted.env
+images:
+  - name: ghcr.io/tonybutt/task-api
+    digest: sha256:cb5299e32323046022c3a8dcdb2ff22c85a82e384302d28fca66ee7cebfe618c

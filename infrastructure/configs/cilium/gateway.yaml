@@ -22,3 +22,18 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: https-task
+      protocol: HTTPS
+      port: 443
+      hostname: task.abutt.dev
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: task-tls
+            namespace: task
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: task

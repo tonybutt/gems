@@ -44,6 +44,11 @@ spec:
       copy:
         - from: "@monorepo/apps/valentines/**"
           to: "@artifact/"
+    - name: app-task
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/task/**"
+          to: "@artifact/"
     - name: app-jcu-site
       originRevision: "@monorepo"
       copy:

@@ -6,4 +6,5 @@ resources:
   - cloudflared-emilyismy-love.yaml
   - jcu-site.yaml
   - kanidm.yaml
+  - task.yaml
   - valentines.yaml
