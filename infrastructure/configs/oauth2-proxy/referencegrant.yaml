@@ -1,13 +1,20 @@
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: ReferenceGrant
-metadata:
-  name: allow-oauth2-proxy-backend
-  namespace: oauth2-proxy
-spec:
-  from:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      namespace: valentines
-  to:
-    - group: ""
-      kind: Service
+---
+{
+  apiVersion: "gateway.networking.k8s.io/v1beta1",
+  kind: "ReferenceGrant",
+  metadata: {
+    name: "allow-oauth2-proxy-backend",
+    namespace: "oauth2-proxy",
+  },
+  spec: {
+    from: [{
+      group: "gateway.networking.k8s.io",
+      kind: "HTTPRoute",
+      namespace: "valentines",
+    }],
+    to: [{
+      group: "",
+      kind: "Service",
+    }],
+  },
+}

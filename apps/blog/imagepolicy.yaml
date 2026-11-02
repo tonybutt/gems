@@ -1,13 +1,22 @@
-apiVersion: image.toolkit.fluxcd.io/v1
-kind: ImagePolicy
-metadata:
-  name: blog
-spec:
-  imageRepositoryRef:
-    name: blog
-  filterTags:
-    pattern: '^(?P<ts>\d{14})$'
-    extract: "$ts"
-  policy:
-    numerical:
-      order: asc
+---
+{
+  apiVersion: "image.toolkit.fluxcd.io/v1",
+  kind: "ImagePolicy",
+  metadata: {
+    name: "blog",
+  },
+  spec: {
+    imageRepositoryRef: {
+      name: "blog",
+    },
+    filterTags: {
+      pattern: "^(?P<ts>\\d{14})$",
+      extract: "$ts",
+    },
+    policy: {
+      numerical: {
+        order: "asc",
+      },
+    },
+  },
+}

@@ -1,14 +1,23 @@
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: default-deny-ingress
-spec:
-  endpointSelector: {}
-  ingress:
-    - fromEntities:
-        - ingress
-        - host
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
+---
+{
+  apiVersion: "cilium.io/v2",
+  kind: "CiliumNetworkPolicy",
+  metadata: {
+    name: "default-deny-ingress",
+  },
+  spec: {
+    endpointSelector: {},
+    ingress: [{
+      fromEntities: [
+        "ingress",
+        "host",
+      ],
+      toPorts: [{
+        ports: [{
+          port: "8080",
+          protocol: "TCP",
+        }],
+      }],
+    }],
+  },
+}

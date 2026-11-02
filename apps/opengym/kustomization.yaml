@@ -1,25 +1,33 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: opengym
-labels:
-  - includeSelectors: false
-    includeTemplates: true
-    pairs:
-      app.kubernetes.io/name: opengym
-      app.kubernetes.io/part-of: opengym
-      app.kubernetes.io/managed-by: flux
-resources:
-  - ns.yaml
-  - serviceaccount.yaml
-  - persistentvolumeclaim.yaml
-  - deployment.yaml
-  - service.yaml
-  - httproute.yaml
-  - ciliumnetworkpolicy.yaml
-images:
-  - name: ghcr.io/duartesantos8/opengym-api
-    newTag: 1.4.3
-    digest: sha256:21d1fde39470d9c91424db51be64f5dd57c75b0b493345016f1d6e268dceae16
-  - name: ghcr.io/duartesantos8/opengym-web
-    newTag: 1.4.3
-    digest: sha256:e77ef879d10549acc88a888e0cd4d566592c5680bee6436b05071678fcf8b512
+---
+{
+  apiVersion: "kustomize.config.k8s.io/v1beta1",
+  kind: "Kustomization",
+  namespace: "opengym",
+  labels: [{
+    includeSelectors: false,
+    includeTemplates: true,
+    pairs: {
+      app.kubernetes.io/name: "opengym",
+      app.kubernetes.io/part-of: "opengym",
+      app.kubernetes.io/managed-by: "flux",
+    },
+  }],
+  resources: [
+    "ns.yaml",
+    "serviceaccount.yaml",
+    "persistentvolumeclaim.yaml",
+    "deployment.yaml",
+    "service.yaml",
+    "httproute.yaml",
+    "ciliumnetworkpolicy.yaml",
+  ],
+  images: [{
+    name: "ghcr.io/duartesantos8/opengym-api",
+    newTag: "1.4.3",
+    digest: "sha256:21d1fde39470d9c91424db51be64f5dd57c75b0b493345016f1d6e268dceae16",
+  }, {
+    name: "ghcr.io/duartesantos8/opengym-web",
+    newTag: "1.4.3",
+    digest: "sha256:e77ef879d10549acc88a888e0cd4d566592c5680bee6436b05071678fcf8b512",
+  }],
+}

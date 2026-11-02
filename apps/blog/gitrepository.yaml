@@ -1,12 +1,19 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: blog
-  namespace: flux-system
-spec:
-  interval: 1m
-  url: ssh://git@github.com/tonybutt/blog
-  ref:
-    branch: main
-  secretRef:
-    name: blog-deploy-key
+---
+{
+  apiVersion: "source.toolkit.fluxcd.io/v1",
+  kind: "GitRepository",
+  metadata: {
+    name: "blog",
+    namespace: "flux-system",
+  },
+  spec: {
+    interval: "1m",
+    url: "ssh://git@github.com/tonybutt/blog",
+    ref: {
+      branch: "main",
+    },
+    secretRef: {
+      name: "blog-deploy-key",
+    },
+  },
+}

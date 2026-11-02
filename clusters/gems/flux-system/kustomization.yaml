@@ -1,13 +1,17 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: flux-system
-resources:
-  - gotk-components.yaml
-  - gotk-sync.yaml
-  - gems-flux-push.encrypted.yaml
-  - ghcr-pull-secret.encrypted.yaml
-  - gems-push-gitrepository.yaml
-  - jcu-site-image-automation.yaml
-  - jcu-site-imageupdateautomation.yaml
-  - task-api-image-automation.yaml
-  - task-api-imageupdateautomation.yaml
+---
+{
+  apiVersion: "kustomize.config.k8s.io/v1beta1",
+  kind: "Kustomization",
+  namespace: "flux-system",
+  resources: [
+    "gotk-components.yaml",
+    "gotk-sync.yaml",
+    "gems-flux-push.encrypted.yaml",
+    "ghcr-pull-secret.encrypted.yaml",
+    "gems-push-gitrepository.yaml",
+    "jcu-site-image-automation.yaml",
+    "jcu-site-imageupdateautomation.yaml",
+    "task-api-image-automation.yaml",
+    "task-api-imageupdateautomation.yaml",
+  ],
+}

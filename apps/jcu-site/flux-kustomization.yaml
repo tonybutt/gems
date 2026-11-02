@@ -1,16 +1,23 @@
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: jcu-site
-  namespace: flux-system
-spec:
-  interval: 5m
-  sourceRef:
-    kind: GitRepository
-    name: jcu-site
-  path: ./deploy
-  prune: true
-  wait: true
-  images:
-    - name: ghcr.io/tonybutt/jcu-site
-      newTag: "20260403034055-503517f" # {"$imagepolicy": "flux-system:jcu-site:tag"}
+---
+{
+  apiVersion: "kustomize.toolkit.fluxcd.io/v1",
+  kind: "Kustomization",
+  metadata: {
+    name: "jcu-site",
+    namespace: "flux-system",
+  },
+  spec: {
+    interval: "5m",
+    sourceRef: {
+      kind: "GitRepository",
+      name: "jcu-site",
+    },
+    path: "./deploy",
+    prune: true,
+    wait: true,
+    images: [{
+      name: "ghcr.io/tonybutt/jcu-site",
+      newTag: "20260403034055-503517f", # {"$imagepolicy": "flux-system:jcu-site:tag"}
+    }],
+  },
+}

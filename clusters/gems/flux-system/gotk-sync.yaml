@@ -1,27 +1,40 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: flux-system
-  namespace: flux-system
-spec:
-  interval: 30s
-  ref:
-    branch: main
-  url: https://github.com/tonybutt/gems.git
 ---
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: flux-system
-  namespace: flux-system
-spec:
-  interval: 30s
-  path: ./clusters/gems
-  prune: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
+{
+  apiVersion: "source.toolkit.fluxcd.io/v1",
+  kind: "GitRepository",
+  metadata: {
+    name: "flux-system",
+    namespace: "flux-system",
+  },
+  spec: {
+    interval: "30s",
+    ref: {
+      branch: "main",
+    },
+    url: "https://github.com/tonybutt/gems.git",
+  },
+}
+---
+{
+  apiVersion: "kustomize.toolkit.fluxcd.io/v1",
+  kind: "Kustomization",
+  metadata: {
+    name: "flux-system",
+    namespace: "flux-system",
+  },
+  spec: {
+    interval: "30s",
+    path: "./clusters/gems",
+    prune: true,
+    decryption: {
+      provider: "sops",
+      secretRef: {
+        name: "sops-age",
+      },
+    },
+    sourceRef: {
+      kind: "GitRepository",
+      name: "flux-system",
+    },
+  },
+}

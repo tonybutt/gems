@@ -1,139 +1,206 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: opengym
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app.kubernetes.io/component: app
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/component: app
-    spec:
-      serviceAccountName: opengym
-      automountServiceAccountToken: false
-      terminationGracePeriodSeconds: 10
-      securityContext:
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: api
-          image: ghcr.io/duartesantos8/opengym-api
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
-          env:
-            - name: PORT
-              value: "3000"
-            - name: DATA_DIR
-              value: /data
-            - name: RP_ID
-              value: gym.abutt.dev
-            - name: ORIGIN
-              value: https://gym.abutt.dev
-            - name: FIRST_USER_ADMIN
-              value: "1"
-            - name: INVITE_ONLY
-              value: "1"
-            - name: TRUST_PROXY
-              value: "1"
-          ports:
-            - name: api
-              containerPort: 3000
-          resources:
-            requests:
-              cpu: 10m
-              memory: 256Mi
-            limits:
-              memory: 256Mi
-          startupProbe:
-            httpGet:
-              path: /api/health
-              port: api
-            periodSeconds: 2
-            failureThreshold: 30
-          livenessProbe:
-            httpGet:
-              path: /api/health
-              port: api
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /api/health
-              port: api
-            periodSeconds: 5
-          volumeMounts:
-            - name: data
-              mountPath: /data
-            - name: api-tmp
-              mountPath: /tmp
-        - name: web
-          image: ghcr.io/duartesantos8/opengym-web
-          securityContext:
-            runAsUser: 101
-            runAsGroup: 101
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
-          env:
-            - name: NGINX_PORT
-              value: "8080"
-            - name: BACKEND
-              value: 127.0.0.1
-            - name: PORT
-              value: "3000"
-            - name: CF_CONNECTING_IP
-              value: $http_cf_connecting_ip
-          ports:
-            - name: web
-              containerPort: 8080
-          resources:
-            requests:
-              cpu: 10m
-              memory: 64Mi
-            limits:
-              memory: 64Mi
-          startupProbe:
-            httpGet:
-              path: /
-              port: web
-            periodSeconds: 2
-            failureThreshold: 30
-          livenessProbe:
-            httpGet:
-              path: /
-              port: web
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: web
-            periodSeconds: 5
-          volumeMounts:
-            - name: nginx-conf
-              mountPath: /etc/nginx/conf.d
-            - name: web-tmp
-              mountPath: /tmp
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: opengym-data
-        - name: api-tmp
-          emptyDir:
-            sizeLimit: 64Mi
-        - name: nginx-conf
-          emptyDir:
-            sizeLimit: 1Mi
-        - name: web-tmp
-          emptyDir:
-            sizeLimit: 128Mi
+---
+{
+  apiVersion: "apps/v1",
+  kind: "Deployment",
+  metadata: {
+    name: "opengym",
+  },
+  spec: {
+    replicas: 1,
+    strategy: {
+      type: "Recreate",
+    },
+    selector: {
+      matchLabels: {
+        app.kubernetes.io/component: "app",
+      },
+    },
+    template: {
+      metadata: {
+        labels: {
+          app.kubernetes.io/component: "app",
+        },
+      },
+      spec: {
+        serviceAccountName: "opengym",
+        automountServiceAccountToken: false,
+        terminationGracePeriodSeconds: 10,
+        securityContext: {
+          runAsNonRoot: true,
+          seccompProfile: {
+            type: "RuntimeDefault",
+          },
+        },
+        containers: [{
+          name: "api",
+          image: "ghcr.io/duartesantos8/opengym-api",
+          securityContext: {
+            runAsUser: 1000,
+            runAsGroup: 1000,
+            allowPrivilegeEscalation: false,
+            readOnlyRootFilesystem: true,
+            capabilities: {
+              drop: [
+                "ALL",
+              ],
+            },
+          },
+          env: [{
+            name: "PORT",
+            value: "3000",
+          }, {
+            name: "DATA_DIR",
+            value: "/data",
+          }, {
+            name: "RP_ID",
+            value: "gym.abutt.dev",
+          }, {
+            name: "ORIGIN",
+            value: "https://gym.abutt.dev",
+          }, {
+            name: "FIRST_USER_ADMIN",
+            value: "1",
+          }, {
+            name: "INVITE_ONLY",
+            value: "1",
+          }, {
+            name: "TRUST_PROXY",
+            value: "1",
+          }],
+          ports: [{
+            name: "api",
+            containerPort: 3000,
+          }],
+          resources: {
+            requests: {
+              cpu: "10m",
+              memory: "256Mi",
+            },
+            limits: {
+              memory: "256Mi",
+            },
+          },
+          startupProbe: {
+            httpGet: {
+              path: "/api/health",
+              port: "api",
+            },
+            periodSeconds: 2,
+            failureThreshold: 30,
+          },
+          livenessProbe: {
+            httpGet: {
+              path: "/api/health",
+              port: "api",
+            },
+            periodSeconds: 10,
+          },
+          readinessProbe: {
+            httpGet: {
+              path: "/api/health",
+              port: "api",
+            },
+            periodSeconds: 5,
+          },
+          volumeMounts: [{
+            name: "data",
+            mountPath: "/data",
+          }, {
+            name: "api-tmp",
+            mountPath: "/tmp",
+          }],
+        }, {
+          name: "web",
+          image: "ghcr.io/duartesantos8/opengym-web",
+          securityContext: {
+            runAsUser: 101,
+            runAsGroup: 101,
+            allowPrivilegeEscalation: false,
+            readOnlyRootFilesystem: true,
+            capabilities: {
+              drop: [
+                "ALL",
+              ],
+            },
+          },
+          env: [{
+            name: "NGINX_PORT",
+            value: "8080",
+          }, {
+            name: "BACKEND",
+            value: "127.0.0.1",
+          }, {
+            name: "PORT",
+            value: "3000",
+          }, {
+            name: "CF_CONNECTING_IP",
+            value: "$http_cf_connecting_ip",
+          }],
+          ports: [{
+            name: "web",
+            containerPort: 8080,
+          }],
+          resources: {
+            requests: {
+              cpu: "10m",
+              memory: "64Mi",
+            },
+            limits: {
+              memory: "64Mi",
+            },
+          },
+          startupProbe: {
+            httpGet: {
+              path: "/",
+              port: "web",
+            },
+            periodSeconds: 2,
+            failureThreshold: 30,
+          },
+          livenessProbe: {
+            httpGet: {
+              path: "/",
+              port: "web",
+            },
+            periodSeconds: 10,
+          },
+          readinessProbe: {
+            httpGet: {
+              path: "/",
+              port: "web",
+            },
+            periodSeconds: 5,
+          },
+          volumeMounts: [{
+            name: "nginx-conf",
+            mountPath: "/etc/nginx/conf.d",
+          }, {
+            name: "web-tmp",
+            mountPath: "/tmp",
+          }],
+        }],
+        volumes: [{
+          name: "data",
+          persistentVolumeClaim: {
+            claimName: "opengym-data",
+          },
+        }, {
+          name: "api-tmp",
+          emptyDir: {
+            sizeLimit: "64Mi",
+          },
+        }, {
+          name: "nginx-conf",
+          emptyDir: {
+            sizeLimit: "1Mi",
+          },
+        }, {
+          name: "web-tmp",
+          emptyDir: {
+            sizeLimit: "128Mi",
+          },
+        }],
+      },
+    },
+  },
+}

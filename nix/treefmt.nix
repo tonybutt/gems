@@ -1,6 +1,17 @@
 # Treefmt configuration
 { pkgs, treefmt-nix }:
 
+let
+  kubernetesManifests = [
+    "apps/**/*.yaml"
+    "clusters/**/*.yaml"
+    "infrastructure/**/*.yaml"
+  ];
+  nonKubernetesYaml = [
+    "**/helm-values.yaml"
+    "apps/cloudflared/*/config.yaml"
+  ];
+in
 treefmt-nix.lib.evalModule pkgs {
   projectRootFile = "flake.nix";
 
@@ -23,10 +34,17 @@ treefmt-nix.lib.evalModule pkgs {
       includes = [
         "*.md"
         "*.json"
-        "*.yaml"
-        "*.yml"
-      ];
+        ".sops.yaml"
+        "talos/**/*.yaml"
+      ]
+      ++ nonKubernetesYaml;
       excludes = [ "**/credentials.json" ];
+    };
+    yamlfmt = {
+      enable = true;
+      includes = kubernetesManifests;
+      excludes = nonKubernetesYaml;
+      settings.formatter.type = "kyaml";
     };
   };
 }

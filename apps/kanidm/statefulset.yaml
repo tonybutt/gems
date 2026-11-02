@@ -1,83 +1,135 @@
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: kanidm
-  annotations:
-    reloader.stakater.com/auto: "true"
-spec:
-  serviceName: kanidm
-  replicas: 1
-  selector:
-    matchLabels:
-      app: kanidm
-  template:
-    metadata:
-      labels:
-        app: kanidm
-    spec:
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-      initContainers:
-        - name: fix-permissions
-          image: busybox:1.37
-          command: ["sh", "-c", "chmod 0700 /data && chown 1000:1000 /data"]
-          volumeMounts:
-            - name: data
-              mountPath: /data
-          securityContext:
-            runAsUser: 0
-      containers:
-        - name: kanidm
-          image: kanidm/server:1.9.2
-          ports:
-            - containerPort: 8443
-          volumeMounts:
-            - name: config
-              mountPath: /data/server.toml
-              subPath: server.toml
-              readOnly: true
-            - name: certs
-              mountPath: /certs
-              readOnly: true
-            - name: style
-              mountPath: /hpkg/style.css
-              subPath: style.css
-              readOnly: true
-            - name: data
-              mountPath: /data
-          readinessProbe:
-            exec:
-              command: ["/sbin/kanidmd", "scripting", "healthcheck"]
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            exec:
-              command: ["/sbin/kanidmd", "scripting", "healthcheck"]
-            initialDelaySeconds: 10
-            periodSeconds: 30
-      volumes:
-        - name: config
-          configMap:
-            name: kanidm-config
-            defaultMode: 0440
-            items:
-              - key: config.toml
-                path: server.toml
-        - name: certs
-          secret:
-            secretName: kanidm-tls
-            defaultMode: 0440
-        - name: style
-          configMap:
-            name: kanidm-style
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: openebs-hostpath
-        resources:
-          requests:
-            storage: 1Gi
+---
+{
+  apiVersion: "apps/v1",
+  kind: "StatefulSet",
+  metadata: {
+    name: "kanidm",
+    annotations: {
+      reloader.stakater.com/auto: "true",
+    },
+  },
+  spec: {
+    serviceName: "kanidm",
+    replicas: 1,
+    selector: {
+      matchLabels: {
+        app: "kanidm",
+      },
+    },
+    template: {
+      metadata: {
+        labels: {
+          app: "kanidm",
+        },
+      },
+      spec: {
+        securityContext: {
+          runAsUser: 1000,
+          runAsGroup: 1000,
+          fsGroup: 1000,
+        },
+        initContainers: [{
+          name: "fix-permissions",
+          image: "busybox:1.37",
+          command: [
+            "sh",
+            "-c",
+            "chmod 0700 /data && chown 1000:1000 /data",
+          ],
+          volumeMounts: [{
+            name: "data",
+            mountPath: "/data",
+          }],
+          securityContext: {
+            runAsUser: 0,
+          },
+        }],
+        containers: [{
+          name: "kanidm",
+          image: "kanidm/server:1.9.2",
+          ports: [{
+            containerPort: 8443,
+          }],
+          volumeMounts: [{
+            name: "config",
+            mountPath: "/data/server.toml",
+            subPath: "server.toml",
+            readOnly: true,
+          }, {
+            name: "certs",
+            mountPath: "/certs",
+            readOnly: true,
+          }, {
+            name: "style",
+            mountPath: "/hpkg/style.css",
+            subPath: "style.css",
+            readOnly: true,
+          }, {
+            name: "data",
+            mountPath: "/data",
+          }],
+          readinessProbe: {
+            exec: {
+              command: [
+                "/sbin/kanidmd",
+                "scripting",
+                "healthcheck",
+              ],
+            },
+            initialDelaySeconds: 5,
+            periodSeconds: 10,
+          },
+          livenessProbe: {
+            exec: {
+              command: [
+                "/sbin/kanidmd",
+                "scripting",
+                "healthcheck",
+              ],
+            },
+            initialDelaySeconds: 10,
+            periodSeconds: 30,
+          },
+        }],
+        volumes: [{
+          name: "config",
+          configMap: {
+            name: "kanidm-config",
+            defaultMode: 0440,
+            items: [{
+              key: "config.toml",
+              path: "server.toml",
+            }],
+          },
+        }, {
+          name: "certs",
+          secret: {
+            secretName: "kanidm-tls",
+            defaultMode: 0440,
+          },
+        }, {
+          name: "style",
+          configMap: {
+            name: "kanidm-style",
+          },
+        }],
+      },
+    },
+    volumeClaimTemplates: [{
+      metadata: {
+        name: "data",
+      },
+      spec: {
+        accessModes: [
+          "ReadWriteOnce",
+        ],
+        storageClassName: "openebs-hostpath",
+        resources: {
+          requests: {
+            storage: "1Gi",
+          },
+        },
+      },
+    }],
+  },
+}

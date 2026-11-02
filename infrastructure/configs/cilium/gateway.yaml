@@ -1,39 +1,58 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: cloudflare-tunnel
-  namespace: default
-spec:
-  gatewayClassName: cilium
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      hostname: "*.abutt.dev"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: tls-passthrough
-      protocol: TLS
-      port: 443
-      hostname: sso.abutt.dev
-      tls:
-        mode: Passthrough
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-task
-      protocol: HTTPS
-      port: 443
-      hostname: task.abutt.dev
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: task-tls
-            namespace: task
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-            matchLabels:
-              kubernetes.io/metadata.name: task
+---
+{
+  apiVersion: "gateway.networking.k8s.io/v1",
+  kind: "Gateway",
+  metadata: {
+    name: "cloudflare-tunnel",
+    namespace: "default",
+  },
+  spec: {
+    gatewayClassName: "cilium",
+    listeners: [{
+      name: "http",
+      protocol: "HTTP",
+      port: 80,
+      hostname: "*.abutt.dev",
+      allowedRoutes: {
+        namespaces: {
+          from: "All",
+        },
+      },
+    }, {
+      name: "tls-passthrough",
+      protocol: "TLS",
+      port: 443,
+      hostname: "sso.abutt.dev",
+      tls: {
+        mode: "Passthrough",
+      },
+      allowedRoutes: {
+        namespaces: {
+          from: "All",
+        },
+      },
+    }, {
+      name: "https-task",
+      protocol: "HTTPS",
+      port: 443,
+      hostname: "task.abutt.dev",
+      tls: {
+        mode: "Terminate",
+        certificateRefs: [{
+          name: "task-tls",
+          namespace: "task",
+        }],
+      },
+      allowedRoutes: {
+        namespaces: {
+          from: "Selector",
+          selector: {
+            matchLabels: {
+              kubernetes.io/metadata.name: "task",
+            },
+          },
+        },
+      },
+    }],
+  },
+}
