@@ -54,3 +54,8 @@ spec:
       copy:
         - from: "@monorepo/apps/jcu-site/**"
           to: "@artifact/"
+    - name: app-opengym
+      originRevision: "@monorepo"
+      copy:
+        - from: "@monorepo/apps/opengym/**"
+          to: "@artifact/"

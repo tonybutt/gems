@@ -5,6 +5,7 @@ resources:
   - cloudflared/abutt.dev
   - cloudflared/emilyismy.love
   - kanidm
+  - opengym
   - jcu-site
   - task
   - valentines
