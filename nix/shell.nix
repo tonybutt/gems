@@ -18,7 +18,7 @@ let
       echo "Upgrading ${node.name} (${node.ip}) to Talos v$VERSION..."
       ${pkgs.talosctl}/bin/talosctl upgrade \
         --talosconfig talos/gen/talosconfig \
-        --image "ghcr.io/siderolabs/installer:v$VERSION" \
+        --image "factory.talos.dev/metal-installer/${nodeConfig.schematic}:v$VERSION" \
         -n ${node.ip}
     ''
   ) nodeConfig.nodes;
@@ -111,7 +111,7 @@ pkgs.mkShell {
       cloudflared
 
       # Identity
-      kanidm_1_9
+      kanidm_1_11
 
       # Custom packages
       packages.render-helm

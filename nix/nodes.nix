@@ -6,9 +6,13 @@
     controlPlaneEndpoint = "192.168.86.250";
   };
 
+  # Image Factory schematic for the installer image. ghcr.io/siderolabs/installer
+  # is no longer published as of Talos 1.14. Vanilla schematic (no extensions).
+  schematic = "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba";
+
   versions = {
-    talos = "1.12.6";
-    kubernetes = "1.35.3";
+    talos = "1.14.5";
+    kubernetes = "1.37.2";
   };
 
   # Shared machine config applied to all nodes
@@ -36,7 +40,7 @@
   nodes = [
     {
       name = "gem-master-0";
-      ip = "192.168.86.23";
+      ip = "192.168.86.35";
       type = "controlplane";
     }
     {
@@ -56,7 +60,7 @@
     }
     {
       name = "gem-worker-1";
-      ip = "192.168.86.37";
+      ip = "192.168.86.33";
       type = "worker";
     }
   ];

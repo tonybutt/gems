@@ -12,6 +12,7 @@ let
     CLUSTER_NAME="${nodes.cluster.name}"
     CLUSTER_ENDPOINT="${nodes.cluster.endpoint}"
     TALOS_VERSION="${nodes.versions.talos}"
+    TALOS_SCHEMATIC="${nodes.schematic}"
     KUBERNETES_VERSION="${nodes.versions.kubernetes}"
     NODES=(${nodesArray})
 
