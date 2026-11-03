@@ -1,5 +1,5 @@
 # chart: cilium/cilium
-# version: 1.18.16
+# version: 1.19.10
 # repo: https://helm.cilium.io/
 # namespace: kube-system
 # release-name: cilium
