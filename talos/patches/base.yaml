@@ -1,20 +1,27 @@
-machine:
-  install:
-    disk: /dev/nvme0n1
-  kubelet:
-    extraMounts:
-      # OpenEBS LocalPV hostpath storage
-      - destination: /var/openebs/local
-        type: bind
-        source: /var/openebs/local
-        options:
-          - rbind
-          - rshared
-          - rw
-cluster:
-  network:
-    cni:
-      name: none
-  proxy:
-    disabled: true
-  allowSchedulingOnControlPlanes: true
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/nvme0n1"
+---
+# OpenEBS LocalPV hostpath storage, visible to the kubelet under /var/mnt
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: openebs-local
+volumeType: directory
+---
+# Cilium is the CNI
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete
+---
+# 1.14 defaults for new clusters; kept at the pre-1.14 behaviour until rolled out on their own
+apiVersion: v1alpha1
+kind: SecurityProfileConfig
+workloadIsolation: false
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+mount:
+  secure: false

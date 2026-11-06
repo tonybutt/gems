@@ -62,6 +62,7 @@
       checks.${system} = {
         formatting = treefmt.config.build.check self;
         pre-commit = pre-commit;
+        talos-configs = import ./nix/talos-configs-check.nix { inherit pkgs nodes; };
       };
     };
 }

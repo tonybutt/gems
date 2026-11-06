@@ -1,0 +1,22 @@
+# Control planes run workloads: the default labels without the NoSchedule taint
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+nodeIP: {}
+labels:
+  node-role.kubernetes.io/control-plane: ""
+  node.kubernetes.io/exclude-from-external-load-balancers: ""
+---
+# Cilium replaces kube-proxy; a missing document falls back to enabled
+apiVersion: v1alpha1
+kind: KubeProxyConfig
+enabled: false
+---
+# Tokens issued before the API endpoint moved from .250 to the .69 VIP stay valid
+apiVersion: v1alpha1
+kind: KubeServiceAccountConfig
+accepted:
+  issuers:
+    - https://192.168.86.250:6443
+  audiences:
+    - https://192.168.86.69:6443
+    - https://192.168.86.250:6443

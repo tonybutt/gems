@@ -67,12 +67,21 @@ generate_configs() {
   for node in "${NODES[@]}"; do
     IFS=':' read -r name _ip type <<< "$node"
 
+    role_patches=()
+    if [ "$type" = "controlplane" ]; then
+      role_patches=(
+        --config-patch "@$PATCHES_DIR/controlplane-delete-node.yaml"
+        --config-patch "@$PATCHES_DIR/controlplane.yaml"
+      )
+    fi
+
     echo "Generating config for $name ($type)..."
     talosctl gen config "$CLUSTER_NAME" "$CLUSTER_ENDPOINT" \
       --with-secrets "$SECRETS_FILE" \
       --install-image "factory.talos.dev/metal-installer/$TALOS_SCHEMATIC:v$TALOS_VERSION" \
       --kubernetes-version "$KUBERNETES_VERSION" \
       --config-patch "@$PATCHES_DIR/base.yaml" \
+      "${role_patches[@]}" \
       --config-patch "@$NODES_DIR/$name.yaml" \
       --output-types "$type" \
       -o "$GEN_DIR/$name.yaml" \

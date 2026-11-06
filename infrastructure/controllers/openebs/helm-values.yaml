@@ -31,7 +31,7 @@ preUpgradeHook:
 # LocalPV Hostpath configuration
 localpv-provisioner:
   localpv:
-    basePath: /var/openebs/local
+    basePath: /var/mnt/openebs-local
   hostpathClass:
     # We create our own StorageClass with WaitForFirstConsumer
     enabled: false

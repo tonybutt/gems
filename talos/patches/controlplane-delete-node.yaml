@@ -1,0 +1,4 @@
+# Replaced by controlplane.yaml; the taint key cannot be deleted by path
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+$patch: delete

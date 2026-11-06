@@ -7,11 +7,12 @@
     namespace: "openebs",
     annotations: {
       storageclass.kubernetes.io/is-default-class: "true",
+      kustomize.toolkit.fluxcd.io/force: "enabled",
       cas.openebs.io/config: "\
          - name: StorageType\n\
         \  value: hostpath\n\
          - name: BasePath\n\
-        \  value: /var/openebs/local\n\
+        \  value: /var/mnt/openebs-local\n\
         ",
     },
   },
@@ -19,6 +20,6 @@
   volumeBindingMode: "WaitForFirstConsumer",
   reclaimPolicy: "Retain",
   parameters: {
-    hostpath: "/var/openebs/local",
+    hostpath: "/var/mnt/openebs-local",
   },
 }
