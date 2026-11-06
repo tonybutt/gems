@@ -3,7 +3,6 @@
   cluster = {
     name = "gems";
     endpoint = "https://192.168.86.69:6443";
-    controlPlaneEndpoint = "192.168.86.250";
   };
 
   # Image Factory schematic for the installer image. ghcr.io/siderolabs/installer

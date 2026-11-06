@@ -8,7 +8,6 @@ cd "$REPO_ROOT"
 TALOS_DIR="talos"
 GEN_DIR="$TALOS_DIR/gen"
 CLUSTER_DIR="clusters/gems"
-FIRST_MASTER_IP="192.168.86.250"
 
 usage() {
   echo "Usage: bootstrap-gems [options]"

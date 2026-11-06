@@ -7,6 +7,13 @@ let
   # Format nodes as "name:ip:type" for shell
   nodesArray = builtins.concatStringsSep " " (map (n: ''"${n.name}:${n.ip}:${n.type}"'') nodes.nodes);
 
+  firstControlPlane = (builtins.head (builtins.filter (n: n.type == "controlplane") nodes.nodes)).ip;
+
+  bootstrapScript = ''
+    FIRST_MASTER_IP="${firstControlPlane}"
+  ''
+  + builtins.readFile ../scripts/bootstrap-gems.sh;
+
   talosGenScript = ''
     # Injected from nix/nodes.nix
     CLUSTER_NAME="${nodes.cluster.name}"
@@ -59,7 +66,7 @@ in
       kustomize
       sops
     ];
-    text = builtins.readFile ../scripts/bootstrap-gems.sh;
+    text = bootstrapScript;
   };
 
   talos-gen = pkgs.writeShellApplication {

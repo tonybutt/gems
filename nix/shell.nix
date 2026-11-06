@@ -8,6 +8,8 @@
 
 let
   nodeConfig = import ./nodes.nix;
+  controlPlanes = builtins.filter (n: n.type == "controlplane") nodeConfig.nodes;
+  firstControlPlane = (builtins.head controlPlanes).ip;
 
   # Generate upgrade scripts for each node
   upgradeScripts = map (
@@ -49,7 +51,7 @@ let
     echo "Upgrading Kubernetes to v$VERSION..."
     ${pkgs.talosctl}/bin/talosctl upgrade-k8s \
       --talosconfig talos/gen/talosconfig \
-      -n ${nodeConfig.cluster.controlPlaneEndpoint} \
+      -n ${firstControlPlane} \
       --to "$VERSION"
   '';
 
@@ -84,8 +86,8 @@ let
   kubeconfig = pkgs.writeShellScriptBin "kubeconfig" ''
     ${pkgs.talosctl}/bin/talosctl kubeconfig \
       --talosconfig talos/gen/talosconfig \
-      -n ${nodeConfig.cluster.controlPlaneEndpoint} \
-      -e ${nodeConfig.cluster.controlPlaneEndpoint} \
+      -n ${firstControlPlane} \
+      -e ${firstControlPlane} \
       --context ${nodeConfig.cluster.name}
   '';
 
