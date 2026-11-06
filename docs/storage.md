@@ -6,11 +6,11 @@ All nodes in the Gems cluster are Intel NUCs with NVMe storage. Talos is install
 
 ### Control Plane Nodes
 
-| Node         | IP             | Drive        | Model                    | Size   | Serial             | WWID                                                                                               |
-| ------------ | -------------- | ------------ | ------------------------ | ------ | ------------------ | -------------------------------------------------------------------------------------------------- |
-| gem-master-0 | 192.168.86.250 | /dev/nvme0n1 | Lexar SSD NM6A1 256GB    | 256 GB | MJF971R001481P1100 | nvme.1e4b-4d4a46393731523030313438315031313030-4c6578617220535344204e4d364131203235364742-00000001 |
-| gem-master-1 | 192.168.86.21  | /dev/nvme0n1 | KINGSTON OM8PDP3512B-A01 | 512 GB | 50026B76849EAB75   | eui.0026b76849eab755                                                                               |
-| gem-master-2 | 192.168.86.31  | /dev/nvme0n1 | KINGSTON OM8PDP3512B-A01 | 512 GB | 50026B76849EABCC   | eui.0026b76849eabcc5                                                                               |
+| Node         | IP            | Drive        | Model                    | Size   | Serial             | WWID                                                                                               |
+| ------------ | ------------- | ------------ | ------------------------ | ------ | ------------------ | -------------------------------------------------------------------------------------------------- |
+| gem-master-0 | 192.168.86.35 | /dev/nvme0n1 | Lexar SSD NM6A1 256GB    | 256 GB | MJF971R001481P1100 | nvme.1e4b-4d4a46393731523030313438315031313030-4c6578617220535344204e4d364131203235364742-00000001 |
+| gem-master-1 | 192.168.86.21 | /dev/nvme0n1 | KINGSTON OM8PDP3512B-A01 | 512 GB | 50026B76849EAB75   | eui.0026b76849eab755                                                                               |
+| gem-master-2 | 192.168.86.31 | /dev/nvme0n1 | KINGSTON OM8PDP3512B-A01 | 512 GB | 50026B76849EABCC   | eui.0026b76849eabcc5                                                                               |
 
 ### Worker Nodes
 
@@ -117,7 +117,7 @@ To refresh disk information from the cluster:
 
 ```bash
 # List disks on all nodes
-for node in 192.168.86.250 192.168.86.21 192.168.86.31 192.168.86.25 192.168.86.37; do
+for node in 192.168.86.35 192.168.86.21 192.168.86.31 192.168.86.25 192.168.86.33; do
   echo "=== Node: $node ==="
   talosctl -n $node get disks
 done

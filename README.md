@@ -30,7 +30,7 @@ Gems is a production-grade Kubernetes homelab running on Intel NUCs with Talos L
 ```
                     ┌─────────────────┐
                     │   Cluster API   │
-                    │  192.168.86.250 │
+                    │  192.168.86.69  │
                     └────────┬────────┘
                              │
         ┌────────────────────┼────────────────────┐
@@ -39,7 +39,7 @@ Gems is a production-grade Kubernetes homelab running on Intel NUCs with Talos L
 ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
 │ gem-master-0  │   │ gem-master-1  │   │ gem-master-2  │
 │ Control Plane │   │ Control Plane │   │ Control Plane │
-│ .250 │ 256GB  │   │ .21  │ 512GB  │   │ .31  │ 512GB  │
+│ .35  │ 256GB  │   │ .21  │ 512GB  │   │ .31  │ 512GB  │
 └───────────────┘   └───────────────┘   └───────────────┘
 
         ┌─────────────────────────────────┐
@@ -48,7 +48,7 @@ Gems is a production-grade Kubernetes homelab running on Intel NUCs with Talos L
 ┌───────────────┐                ┌───────────────┐
 │ gem-worker-0  │                │ gem-worker-1  │
 │    Worker     │                │    Worker     │
-│ .25  │ 256GB  │                │ .37  │ 256GB  │
+│ .25  │ 256GB  │                │ .33  │ 256GB  │
 └───────────────┘                └───────────────┘
 ```
 
@@ -127,7 +127,7 @@ talos-gen configs
 apply-gem-master-0 --insecure
 
 # Bootstrap the cluster
-talosctl bootstrap --talosconfig talos/gen/talosconfig -n 192.168.86.250
+talosctl bootstrap --talosconfig talos/gen/talosconfig -n 192.168.86.35
 ```
 
 </details>
@@ -185,18 +185,31 @@ talos-gen configs
 apply-<node-name>
 ```
 
-### Upgrading Talos
+### Upgrading Talos and Kubernetes
+
+Talos moves one minor at a time, control planes first, one node at a time;
+each `upgrade-<node>` waits for its node to rejoin before returning.
+Kubernetes moves one minor at a time after Talos is done. `nix/nodes.nix`
+holds the target versions; pass an explicit version for intermediate steps.
 
 ```bash
-# Use --preserve to keep local storage data
-upgrade-<node-name> <version>
+for n in gem-master-0 gem-master-1 gem-master-2 gem-worker-0 gem-worker-1; do
+  upgrade-$n 1.13.11
+done
+for n in gem-master-0 gem-master-1 gem-master-2 gem-worker-0 gem-worker-1; do
+  upgrade-$n
+done
+
+upgrade-k8s 1.36.5
+upgrade-k8s
+
+talos-gen configs
+apply-<node-name>
 ```
 
-### Upgrading Kubernetes
-
-```bash
-talosctl -n 192.168.86.250 upgrade-k8s --to <version>
-```
+Run `apply-<node>` only after `upgrade-k8s` finishes: generated configs carry
+the kubelet version from `nix/nodes.nix`, and a kubelet newer than the API
+server will not join.
 
 ### Rendering Helm Charts
 
@@ -225,13 +238,13 @@ render-helm --all
 
 ## Nodes
 
-| Node         | IP             | Role          | Storage     |
-| ------------ | -------------- | ------------- | ----------- |
-| gem-master-0 | 192.168.86.250 | Control Plane | 256 GB NVMe |
-| gem-master-1 | 192.168.86.21  | Control Plane | 512 GB NVMe |
-| gem-master-2 | 192.168.86.31  | Control Plane | 512 GB NVMe |
-| gem-worker-0 | 192.168.86.25  | Worker        | 256 GB NVMe |
-| gem-worker-1 | 192.168.86.37  | Worker        | 256 GB NVMe |
+| Node         | IP            | Role          | Storage     |
+| ------------ | ------------- | ------------- | ----------- |
+| gem-master-0 | 192.168.86.35 | Control Plane | 256 GB NVMe |
+| gem-master-1 | 192.168.86.21 | Control Plane | 512 GB NVMe |
+| gem-master-2 | 192.168.86.31 | Control Plane | 512 GB NVMe |
+| gem-worker-0 | 192.168.86.25 | Worker        | 256 GB NVMe |
+| gem-worker-1 | 192.168.86.33 | Worker        | 256 GB NVMe |
 
 ## Tech Stack
 
