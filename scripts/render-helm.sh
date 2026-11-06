@@ -144,13 +144,14 @@ render_chart() {
   fi
 
   # Render to temp file first
-  local temp_file
+  local temp_file err_file
   temp_file=$(mktemp)
-  trap 'rm -f "$temp_file"' RETURN
+  err_file=$(mktemp)
+  trap 'rm -f "$temp_file" "$err_file"' RETURN
 
-  if ! helm "${helm_args[@]}" > "$temp_file" 2>&1; then
+  if ! helm "${helm_args[@]}" > "$temp_file" 2> "$err_file"; then
     echo "  ERROR: helm template failed"
-    cat "$temp_file"
+    cat "$err_file"
     return 1
   fi
 
