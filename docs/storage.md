@@ -90,20 +90,26 @@ Volumes at the time of the move:
    Check `talosctl -n <ip> get volumestatus u-openebs-local` reports `ready`.
 2. For each node that holds volumes, one node at a time:
    1. Back up each volume off the node.
-   2. `flux suspend kustomization` for the owning app, then scale it to 0.
+   2. Suspend the root `flux-system` Kustomization as well as the app's
+      Kustomizations; the root re-applies `app-*` objects and would undo their
+      suspend. Then scale the app to 0.
    3. `apply-<node>`; the dry-run reports no reboot.
    4. Copy the data with a privileged pod pinned to the node that mounts host
-      `/var`: `cp -a /var/openebs/local/<pv>/. /var/mnt/openebs-local/<pv>/`.
+      `/var`: `cp -a /var/openebs/local/<pv> /var/mnt/openebs-local/<pv>`.
    5. Save the PV (`kubectl get pv <pv> -o yaml`), delete the PVC and the PV,
       and create the PV again with `spec.local.path` set to
-      `/var/mnt/openebs-local/<pv>`. Keep its name, annotations and node
-      affinity; drop `uid`, `resourceVersion`, `status` and `claimRef.uid` so
-      the recreated PVC binds to it.
-   6. `flux resume kustomization`, scale the app back up, and check its data.
+      `/var/mnt/openebs-local/<pv>`. Keep its name, annotations, node affinity
+      and `claimRef` namespace and name; drop `uid`, `resourceVersion`,
+      `status`, `claimRef.uid` and `claimRef.resourceVersion`.
+   6. Do not create the PVC by hand: Flux takes over the fields `kubectl create`
+      set and fails trying to remove them from a bound claim. Resume the app's
+      Kustomizations and let Flux (or the StatefulSet) create the PVC; it binds
+      to the pre-bound PV. Check the app's data.
 3. Apply the remaining nodes, then merge so Flux recreates the
    `openebs-hostpath` StorageClass (forced; its parameters are immutable) and
    the provisioner with the new base path.
-4. Once every app is verified, remove `/var/openebs/local` from each node.
+4. Resume the root `flux-system` Kustomization.
+5. Once every app is verified, remove `/var/openebs/local` from each node.
 
 ## Querying Disk Information
 
