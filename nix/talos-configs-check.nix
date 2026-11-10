@@ -4,6 +4,7 @@ let
     concatMap
     concatMapStrings
     escapeShellArgs
+    filter
     optionals
     optionalString
     ;
@@ -58,6 +59,6 @@ in
 pkgs.runCommand "talos-configs" { nativeBuildInputs = [ pkgs.talosctl ]; } ''
   export HOME="$TMPDIR"
   talosctl gen secrets -o secrets.yaml
-  ${concatMapStrings validateNode nodes.nodes}
+  ${concatMapStrings validateNode (filter (n: n.os == "talos") nodes.nodes)}
   touch "$out"
 ''
