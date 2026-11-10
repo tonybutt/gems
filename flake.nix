@@ -54,6 +54,10 @@
         type = "worker";
         os = "nixos";
       } nodes.nodes;
+      deployPkgs = import nixpkgs {
+        inherit system;
+        overlays = [ (import ./nix/deploy-rs-overlay.nix { inherit deploy-rs; }) ];
+      };
       treefmt = import ./nix/treefmt.nix { inherit pkgs treefmt-nix; };
       pre-commit = import ./nix/pre-commit.nix {
         inherit
@@ -84,6 +88,17 @@
       devShells.${system}.default = import ./nix/shell.nix {
         inherit pkgs packages nodes;
         git-hooks = pre-commit;
+        deploy-rs = deployPkgs.deploy-rs.deploy-rs;
+        agenix = agenix.packages.${system}.default;
+      };
+
+      deploy.nodes.gem-gpu-0 = {
+        hostname = gpuNode.ip;
+        sshUser = "anthony";
+        profiles.system = {
+          user = "root";
+          path = deployPkgs.deploy-rs.lib.activate.nixos self.nixosConfigurations.gem-gpu-0;
+        };
       };
 
       nixosConfigurations = {
@@ -106,6 +121,7 @@
         pre-commit = pre-commit;
         talos-configs = import ./nix/talos-configs-check.nix { inherit pkgs nodes; };
         gem-gpu-0 = self.nixosConfigurations.gem-gpu-0.config.system.build.toplevel;
-      };
+      }
+      // deployPkgs.deploy-rs.lib.deployChecks self.deploy;
     };
 }

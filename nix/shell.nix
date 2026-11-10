@@ -4,10 +4,14 @@
   packages,
   nodes,
   git-hooks,
+  deploy-rs,
+  agenix,
 }:
 
 let
   nodeConfig = import ./nodes.nix;
+  talosNodes = builtins.filter (n: n.os == "talos") nodeConfig.nodes;
+  nixosNodes = builtins.filter (n: n.os == "nixos") nodeConfig.nodes;
   controlPlanes = builtins.filter (n: n.type == "controlplane") nodeConfig.nodes;
   firstControlPlane = (builtins.head controlPlanes).ip;
 
@@ -23,7 +27,7 @@ let
         --image "factory.talos.dev/metal-installer/${nodeConfig.schematic}:v$VERSION" \
         -n ${node.ip}
     ''
-  ) nodeConfig.nodes;
+  ) talosNodes;
 
   # Generate apply-config scripts for each node
   # All patches are baked into generated configs by talos-gen configs
@@ -42,7 +46,16 @@ let
         --file talos/gen/${node.name}.yaml \
         $INSECURE
     ''
-  ) nodeConfig.nodes;
+  ) talosNodes;
+
+  deployScripts = map (
+    node:
+    pkgs.writeShellScriptBin "apply-${node.name}" ''
+      set -euo pipefail
+      echo "Deploying ${node.name} (${node.ip}) with deploy-rs..."
+      ${deploy-rs}/bin/deploy ".#${node.name}" "$@"
+    ''
+  ) nixosNodes;
 
   # Kubernetes upgrade script
   upgradeK8s = pkgs.writeShellScriptBin "upgrade-k8s" ''
@@ -63,9 +76,10 @@ let
     echo "  Node commands:"
     echo "    upgrade-<node> [version]  Upgrade Talos on node (default: ${nodeConfig.versions.talos})"
     echo "    upgrade-k8s [version]     Upgrade Kubernetes (default: ${nodeConfig.versions.kubernetes})"
-    echo "    apply-<node> [--insecure] Apply config to node (-i for first apply)"
+    echo "    apply-<node> [--insecure] Apply config to Talos node (-i for first apply)"
+    echo "    apply-<nixos node>        Deploy NixOS node with deploy-rs"
     echo ""
-    echo "  Nodes: ${builtins.concatStringsSep ", " (map (n: n.name) nodeConfig.nodes)}"
+    echo "  Nodes: ${builtins.concatStringsSep ", " (map (n: n.name) talosNodes)}"
     echo ""
     echo "  Talos setup:"
     echo "    talos-iso                 Download ISO with iSCSI extensions"
@@ -104,6 +118,9 @@ pkgs.mkShell {
       kubernetes-helm
       kustomize
       fluxcd
+      nixos-anywhere
+      deploy-rs
+      agenix
 
       # Secrets
       sops
@@ -134,7 +151,8 @@ pkgs.mkShell {
       librsvg # rsvg-convert for SVG to PNG
     ]
     ++ upgradeScripts
-    ++ applyScripts;
+    ++ applyScripts
+    ++ deployScripts;
 
   env = {
     TALOSCONFIG = "talos/gen/talosconfig";
