@@ -5,7 +5,9 @@ let
   nodes = import ./nodes.nix;
 
   # Format nodes as "name:ip:type" for shell
-  nodesArray = builtins.concatStringsSep " " (map (n: ''"${n.name}:${n.ip}:${n.type}"'') nodes.nodes);
+  talosNodes = builtins.filter (n: n.os == "talos") nodes.nodes;
+
+  nodesArray = builtins.concatStringsSep " " (map (n: ''"${n.name}:${n.ip}:${n.type}"'') talosNodes);
 
   firstControlPlane = (builtins.head (builtins.filter (n: n.type == "controlplane") nodes.nodes)).ip;
 

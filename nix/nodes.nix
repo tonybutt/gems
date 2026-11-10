@@ -41,26 +41,31 @@
       name = "gem-master-0";
       ip = "192.168.86.35";
       type = "controlplane";
+      os = "talos";
     }
     {
       name = "gem-master-1";
       ip = "192.168.86.21";
       type = "controlplane";
+      os = "talos";
     }
     {
       name = "gem-master-2";
       ip = "192.168.86.31";
       type = "controlplane";
+      os = "talos";
     }
     {
       name = "gem-worker-0";
       ip = "192.168.86.25";
       type = "worker";
+      os = "talos";
     }
     {
       name = "gem-worker-1";
       ip = "192.168.86.33";
       type = "worker";
+      os = "talos";
     }
   ];
 }
