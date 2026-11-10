@@ -1,14 +1,54 @@
 {
   config,
   lib,
+  pkgs,
+  nodes,
   node,
   ...
 }:
 let
+  inherit (lib)
+    concatMapStringsSep
+    filter
+    toInt
+    versions
+    ;
+
   yubikeys = [
     "no-touch-required sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIO9ZH1VvOc2+1tAkzQzNwhyT+LT6wCBmt9gP2yeH8g+oAAAABHNzaDo= abutt@tiberius.com"
     "no-touch-required sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIKoZU8AWvPjbgJfQXA3Kl6Ep9PzO6tGdN3GP4BRcTitOAAAABHNzaDo= anthony@abutt.io"
   ];
+
+  controlPlanes = filter (n: n.type == "controlplane") nodes.nodes;
+
+  kubeletMinor = toInt (versions.minor pkgs.kubernetes.version);
+  clusterMinor = toInt (versions.minor nodes.versions.kubernetes);
+
+  kubeletConfig = (pkgs.formats.yaml { }).generate "kubelet.yaml" {
+    apiVersion = "kubelet.config.k8s.io/v1beta1";
+    kind = "KubeletConfiguration";
+    cgroupDriver = "systemd";
+    containerRuntimeEndpoint = "unix:///run/containerd/containerd.sock";
+    clusterDNS = [ "10.96.0.10" ];
+    clusterDomain = "cluster.local";
+    authentication = {
+      anonymous.enabled = false;
+      webhook.enabled = true;
+      x509.clientCAFile = "${../talos/ca.crt}";
+    };
+    authorization.mode = "Webhook";
+    rotateCertificates = true;
+    serverTLSBootstrap = false;
+    seccompDefault = true;
+    failSwapOn = true;
+    registerWithTaints = [
+      {
+        key = "nvidia.com/gpu";
+        value = "present";
+        effect = "NoSchedule";
+      }
+    ];
+  };
 in
 {
   nixpkgs.hostPlatform = "x86_64-linux";
@@ -180,6 +220,75 @@ in
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 14d";
+    };
+  };
+
+  assertions = [
+    {
+      assertion = kubeletMinor <= clusterMinor && kubeletMinor >= clusterMinor - 3;
+      message = "kubelet ${pkgs.kubernetes.version} cannot join a ${nodes.versions.kubernetes} cluster: run upgrade-k8s and bump versions.kubernetes in nix/nodes.nix";
+    }
+  ];
+
+  services.haproxy = {
+    enable = true;
+    config = ''
+      global
+        log stdout format raw local0
+
+      defaults
+        mode tcp
+        log global
+        timeout connect 5s
+        timeout client 1h
+        timeout server 1h
+
+      frontend kube-apiserver
+        bind 127.0.0.1:7445
+        default_backend control-planes
+
+      backend control-planes
+        option tcp-check
+      ${concatMapStringsSep "\n" (n: "  server ${n.name} ${n.ip}:6443 check inter 2s") controlPlanes}
+    '';
+  };
+
+  age.secrets.bootstrap-kubeconfig = {
+    file = ../secrets/gem-gpu-0-bootstrap-kubeconfig.age;
+    mode = "0400";
+  };
+
+  systemd.services.kubelet = {
+    description = "Kubernetes kubelet";
+    wantedBy = [ "multi-user.target" ];
+    after = [
+      "containerd.service"
+      "haproxy.service"
+      "network-online.target"
+    ];
+    requires = [
+      "containerd.service"
+      "haproxy.service"
+    ];
+    wants = [ "network-online.target" ];
+    path = with pkgs; [
+      util-linux
+      iproute2
+      ethtool
+      kubernetes
+    ];
+    serviceConfig = {
+      ExecStart = ''
+        ${pkgs.kubernetes}/bin/kubelet \
+          --config=${kubeletConfig} \
+          --kubeconfig=/var/lib/kubelet/kubeconfig \
+          --bootstrap-kubeconfig=${config.age.secrets.bootstrap-kubeconfig.path} \
+          --cert-dir=/var/lib/kubelet/pki \
+          --node-ip=${node.ip}
+      '';
+      Restart = "always";
+      RestartSec = "5s";
+      WorkingDirectory = "/var/lib/kubelet";
     };
   };
 }
