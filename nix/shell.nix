@@ -121,6 +121,7 @@ pkgs.mkShell {
       nixos-anywhere
       deploy-rs
       agenix
+      yq-go
 
       # Secrets
       sops
