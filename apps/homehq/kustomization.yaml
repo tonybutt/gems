@@ -2,13 +2,13 @@
 {
   apiVersion: "kustomize.config.k8s.io/v1beta1",
   kind: "Kustomization",
-  namespace: "task",
+  namespace: "homehq",
   labels: [{
     includeSelectors: false,
     includeTemplates: true,
     pairs: {
-      app.kubernetes.io/name: "task",
-      app.kubernetes.io/part-of: "task",
+      app.kubernetes.io/name: "homehq",
+      app.kubernetes.io/part-of: "homehq",
       app.kubernetes.io/managed-by: "flux",
     },
   }],
@@ -31,20 +31,20 @@
     },
   },
   configMapGenerator: [{
-    name: "task-api-config",
+    name: "homehq-api-config",
     files: [
       "config.toml",
     ],
   }],
   secretGenerator: [{
-    name: "task-api",
+    name: "homehq-api",
     envs: [
-      "secrets/task-api.encrypted.env",
+      "secrets/homehq-api.encrypted.env",
     ],
   }],
   images: [{
-    name: "ghcr.io/tonybutt/task-api",
-    newTag: "20261011181950-62a309f", # {"$imagepolicy": "flux-system:task-api:tag"}
-    digest: "sha256:6f1ce3478af7d9feee19891ca1ed4bad4f1653437f0a5cc11d17fee87f0180a4", # {"$imagepolicy": "flux-system:task-api:digest"}
+    name: "ghcr.io/tonybutt/homehq-api",
+    newTag: "20261011181950-62a309f", # {"$imagepolicy": "flux-system:homehq-api:tag"}
+    digest: "sha256:6f1ce3478af7d9feee19891ca1ed4bad4f1653437f0a5cc11d17fee87f0180a4", # {"$imagepolicy": "flux-system:homehq-api:digest"}
   }],
 }

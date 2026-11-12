@@ -3,7 +3,7 @@
   apiVersion: "apps/v1",
   kind: "Deployment",
   metadata: {
-    name: "task-api",
+    name: "homehq-api",
   },
   spec: {
     replicas: 0,
@@ -22,7 +22,7 @@
         },
       },
       spec: {
-        serviceAccountName: "task-api",
+        serviceAccountName: "homehq-api",
         imagePullSecrets: [{
           name: "ghcr-pull-secret",
         }],
@@ -39,14 +39,14 @@
         },
         containers: [{
           name: "api",
-          image: "ghcr.io/tonybutt/task-api",
+          image: "ghcr.io/tonybutt/homehq-api",
           ports: [{
             name: "http",
             containerPort: 3000,
           }],
           envFrom: [{
             secretRef: {
-              name: "task-api",
+              name: "homehq-api",
             },
           }],
           securityContext: {
@@ -104,12 +104,12 @@
         volumes: [{
           name: "config",
           configMap: {
-            name: "task-api-config",
+            name: "homehq-api-config",
           },
         }, {
           name: "data",
           persistentVolumeClaim: {
-            claimName: "task-api-data",
+            claimName: "homehq-api-data",
           },
         }, {
           name: "tmp",

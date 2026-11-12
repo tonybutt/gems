@@ -3,7 +3,7 @@
   apiVersion: "image.toolkit.fluxcd.io/v1",
   kind: "ImageUpdateAutomation",
   metadata: {
-    name: "task-api",
+    name: "homehq-api",
     namespace: "flux-system",
   },
   spec: {
@@ -23,14 +23,14 @@
           name: "fluxcdbot",
           email: "fluxcdbot@users.noreply.github.com",
         },
-        messageTemplate: "chore(task): {{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}",
+        messageTemplate: "chore(homehq): {{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}",
       },
       push: {
         branch: "main",
       },
     },
     update: {
-      path: "./apps/task",
+      path: "./apps/homehq",
     },
   },
 }

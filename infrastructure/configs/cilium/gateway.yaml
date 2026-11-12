@@ -32,15 +32,15 @@
         },
       },
     }, {
-      name: "https-task",
+      name: "https-homehq",
       protocol: "HTTPS",
       port: 443,
-      hostname: "task.abutt.dev",
+      hostname: "homehq.abutt.dev",
       tls: {
         mode: "Terminate",
         certificateRefs: [{
-          name: "task-tls",
-          namespace: "task",
+          name: "homehq-tls",
+          namespace: "homehq",
         }],
       },
       allowedRoutes: {
@@ -48,7 +48,7 @@
           from: "Selector",
           selector: {
             matchLabels: {
-              kubernetes.io/metadata.name: "task",
+              kubernetes.io/metadata.name: "homehq",
             },
           },
         },

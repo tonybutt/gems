@@ -61,10 +61,10 @@
         to: "@artifact/",
       }],
     }, {
-      name: "app-task",
+      name: "app-homehq",
       originRevision: "@monorepo",
       copy: [{
-        from: "@monorepo/apps/task/**",
+        from: "@monorepo/apps/homehq/**",
         to: "@artifact/",
       }],
     }, {
