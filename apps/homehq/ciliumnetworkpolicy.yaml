@@ -16,6 +16,9 @@
         ports: [{
           port: "3000",
           protocol: "TCP",
+        }, {
+          port: "8080",
+          protocol: "TCP",
         }],
       }],
     }],

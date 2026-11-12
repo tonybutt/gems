@@ -1,0 +1,86 @@
+---
+{
+  apiVersion: "apps/v1",
+  kind: "Deployment",
+  metadata: {
+    name: "homehq-site",
+  },
+  spec: {
+    replicas: 1,
+    selector: {
+      matchLabels: {
+        app.kubernetes.io/component: "site",
+      },
+    },
+    template: {
+      metadata: {
+        labels: {
+          app.kubernetes.io/component: "site",
+        },
+      },
+      spec: {
+        imagePullSecrets: [{
+          name: "ghcr-pull-secret",
+        }],
+        automountServiceAccountToken: false,
+        terminationGracePeriodSeconds: 10,
+        securityContext: {
+          runAsNonRoot: true,
+          runAsUser: 10002,
+          runAsGroup: 10002,
+          seccompProfile: {
+            type: "RuntimeDefault",
+          },
+        },
+        containers: [{
+          name: "site",
+          image: "ghcr.io/tonybutt/homehq-site",
+          ports: [{
+            name: "http",
+            containerPort: 8080,
+          }],
+          securityContext: {
+            allowPrivilegeEscalation: false,
+            readOnlyRootFilesystem: true,
+            capabilities: {
+              drop: [
+                "ALL",
+              ],
+            },
+          },
+          resources: {
+            requests: {
+              cpu: "5m",
+              memory: "16Mi",
+            },
+            limits: {
+              memory: "32Mi",
+            },
+          },
+          startupProbe: {
+            httpGet: {
+              path: "/health",
+              port: "http",
+            },
+            periodSeconds: 2,
+            failureThreshold: 30,
+          },
+          livenessProbe: {
+            httpGet: {
+              path: "/health",
+              port: "http",
+            },
+            periodSeconds: 10,
+          },
+          readinessProbe: {
+            httpGet: {
+              path: "/health",
+              port: "http",
+            },
+            periodSeconds: 5,
+          },
+        }],
+      },
+    },
+  },
+}

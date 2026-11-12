@@ -1,0 +1,41 @@
+---
+{
+  apiVersion: "image.toolkit.fluxcd.io/v1",
+  kind: "ImageRepository",
+  metadata: {
+    name: "homehq-site",
+    namespace: "flux-system",
+  },
+  spec: {
+    image: "ghcr.io/tonybutt/homehq-site",
+    interval: "1m",
+    secretRef: {
+      name: "ghcr-pull-secret",
+    },
+  },
+}
+---
+{
+  apiVersion: "image.toolkit.fluxcd.io/v1",
+  kind: "ImagePolicy",
+  metadata: {
+    name: "homehq-site",
+    namespace: "flux-system",
+  },
+  spec: {
+    imageRepositoryRef: {
+      name: "homehq-site",
+    },
+    digestReflectionPolicy: "Always",
+    interval: "1m",
+    filterTags: {
+      pattern: "^(?P<ts>\\d{14})-[a-f0-9]+$",
+      extract: "$ts",
+    },
+    policy: {
+      numerical: {
+        order: "asc",
+      },
+    },
+  },
+}

@@ -13,5 +13,6 @@
     "jcu-site-imageupdateautomation.yaml",
     "homehq-api-image-automation.yaml",
     "homehq-api-imageupdateautomation.yaml",
+    "homehq-site-image-automation.yaml",
   ],
 }

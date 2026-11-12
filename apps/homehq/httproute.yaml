@@ -31,6 +31,17 @@
         name: "homehq-api",
         port: 80,
       }],
+    }, {
+      matches: [{
+        path: {
+          type: "PathPrefix",
+          value: "/privacy",
+        },
+      }],
+      backendRefs: [{
+        name: "homehq-site",
+        port: 80,
+      }],
     }],
   },
 }
