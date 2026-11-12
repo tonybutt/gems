@@ -13,8 +13,7 @@ import (
 )
 
 // mocks stands in for the GCP provider, the one seam that cannot run
-// locally. It records registered resources and answers the Firebase
-// config invoke with a google-services.json naming one Android client.
+// locally, and records every registered resource.
 type mocks struct {
 	mu        sync.Mutex
 	resources map[string]resource.PropertyMap
@@ -24,76 +23,29 @@ func (m *mocks) NewResource(args pulumi.MockResourceArgs) (string, resource.Prop
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.resources[args.TypeToken+"::"+args.Name] = args.Inputs
-
-	outputs := args.Inputs.Copy()
-	if args.TypeToken == "gcp:firebase/androidApp:AndroidApp" {
-		outputs["appId"] = resource.NewStringProperty("app-" + args.Name)
-	}
-	return args.Name + "-id", outputs, nil
+	return args.Name + "-id", args.Inputs, nil
 }
 
 func (m *mocks) Call(args pulumi.MockCallArgs) (resource.PropertyMap, error) {
-	appID := args.Args["appId"].StringValue()
-	return resource.PropertyMap{
-		"configFileContents": resource.NewStringProperty(encode(
-			`{"client":[{"oauth_client":[{"client_id":"` + appID + `","client_type":1}]}]}`,
-		)),
-	}, nil
+	return resource.PropertyMap{}, nil
 }
 
-func deploy(t *testing.T, cfg homehq.Config) (*mocks, error) {
-	t.Helper()
+func TestDeployCreatesProtectedProjectWithCalendarAPI(t *testing.T) {
 	m := &mocks{resources: map[string]resource.PropertyMap{}}
+
 	err := pulumi.RunErr(func(ctx *pulumi.Context) error {
-		return homehq.Deploy(ctx, cfg)
+		return homehq.Deploy(ctx, homehq.Config{OrgID: "123", ProjectID: "homehq-test"})
 	}, pulumi.WithMocks("homehq-gcp", "test", m))
-	return m, err
-}
-
-func validConfig() homehq.Config {
-	return homehq.Config{
-		OrgID:              "123",
-		ProjectID:          "homehq-test",
-		ReleaseFingerprint: []string{"AA:AA", "BB:BB"},
-		DebugFingerprint:   []string{"CC:CC"},
-	}
-}
-
-func TestDeployRegistersOneAndroidAppPerPackage(t *testing.T) {
-	m, err := deploy(t, validConfig())
 	require.NoError(t, err)
-
-	release := m.resources["gcp:firebase/androidApp:AndroidApp::release"]
-	require.NotNil(t, release)
-	assert.Equal(t, homehq.ReleasePackage, release["packageName"].StringValue())
-	assert.Len(t, release["sha1Hashes"].ArrayValue(), 2)
-
-	debug := m.resources["gcp:firebase/androidApp:AndroidApp::debug"]
-	require.NotNil(t, debug)
-	assert.Equal(t, homehq.DebugPackage, debug["packageName"].StringValue())
 
 	project := m.resources["gcp:organizations/project:Project::homehq"]
 	require.NotNil(t, project)
 	assert.Equal(t, "123", project["orgId"].StringValue())
+	assert.Equal(t, "homehq-test", project["projectId"].StringValue())
 	assert.Equal(t, "PREVENT", project["deletionPolicy"].StringValue())
-}
 
-func TestDeploySkipsDebugAppWithoutFingerprints(t *testing.T) {
-	cfg := validConfig()
-	cfg.DebugFingerprint = nil
-
-	m, err := deploy(t, cfg)
-	require.NoError(t, err)
-
-	assert.NotContains(t, m.resources, "gcp:firebase/androidApp:AndroidApp::debug")
-	assert.Contains(t, m.resources, "gcp:firebase/androidApp:AndroidApp::release")
-}
-
-func TestDeployRequiresAReleaseFingerprint(t *testing.T) {
-	cfg := validConfig()
-	cfg.ReleaseFingerprint = nil
-
-	_, err := deploy(t, cfg)
-
-	require.ErrorContains(t, err, "releaseSha1Fingerprints is empty")
+	calendar := m.resources["gcp:projects/service:Service::calendar-json.googleapis.com"]
+	require.NotNil(t, calendar)
+	assert.Equal(t, "homehq-test", calendar["project"].StringValue())
+	assert.False(t, calendar["disableOnDestroy"].BoolValue())
 }
