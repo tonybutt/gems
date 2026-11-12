@@ -10,9 +10,10 @@ import (
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		cfg := config.New(ctx, "")
-		return homehq.Deploy(ctx, homehq.Config{
+		_, err := homehq.Deploy(ctx, homehq.Config{
 			OrgID:     cfg.Require("orgId"),
 			ProjectID: cfg.Require("projectId"),
 		})
+		return err
 	})
 }

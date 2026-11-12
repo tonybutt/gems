@@ -8,7 +8,9 @@ abutt.io Workspace organization. A Pulumi program in Go.
 | Piece                                       | How                           |
 | ------------------------------------------- | ----------------------------- |
 | Project `homehq-abutt` in the abutt.io org  | Pulumi                        |
-| Calendar API                                | Pulumi                        |
+| Calendar, IAM and Play Developer APIs       | Pulumi                        |
+| `play-publisher` service account and key    | Pulumi                        |
+| Play Console access for `play-publisher`    | Play Console, once            |
 | OAuth consent screen (Google Auth Platform) | Console, once                 |
 | Web OAuth client                            | Console, once                 |
 | Android OAuth clients                       | Console, once per signing key |
@@ -27,8 +29,11 @@ clients (checked November 2026):
 
 ## Apply
 
-From the gems devshell. It ships `gcloud`, `pulumi` and `go`, and sets the
-Pulumi backend and passphrase:
+From the gems devshell. It ships `gcloud`, `pulumi` and `go`, sets the
+Pulumi backend, and uses agenix-shell to decrypt the stack passphrase from
+`secrets/pulumi-homehq-passphrase.age` into `PULUMI_CONFIG_PASSPHRASE`
+with `~/.ssh/id_ed25519` or `~/.ssh/id_rsa` (a recipient in
+`secrets/secrets.nix`):
 
 ```sh
 gcloud auth application-default login     # once, as anthony@abutt.io
@@ -39,12 +44,16 @@ Without application-default credentials, prefix the command with
 `GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token)`; the token
 lasts an hour, so it is not set in the devshell.
 
-`Pulumi.prod.yaml` holds the org and project IDs; nothing in the stack is
-secret. State lives in `~/.pulumi` on this machine. If you lose it, run
-`pulumi import gcp:organizations/project:Project homehq homehq-abutt` and
-import each `gcp:projects/service:Service` as `homehq-abutt/<api>`. The
-project is protected and `deletionPolicy: PREVENT`, so `pulumi destroy`
-cannot remove it.
+`Pulumi.prod.yaml` holds the org and project IDs and the passphrase salt.
+The Play publisher key is a secret in the state, which lives in
+`~/.pulumi` on this machine. If you lose it, run
+`pulumi import gcp:organizations/project:Project homehq homehq-abutt`,
+import each `gcp:projects/service:Service` as `homehq-abutt/<api>` and the
+service account as
+`projects/homehq-abutt/serviceAccounts/play-publisher@homehq-abutt.iam.gserviceaccount.com`;
+the key cannot be imported with its private half, so let `pulumi up` make
+a new one. The project is protected and `deletionPolicy: PREVENT`, so
+`pulumi destroy` cannot remove it.
 
 Tests: `go test -race ./...` (the GCP provider is mocked).
 
@@ -87,3 +96,27 @@ All in <https://console.cloud.google.com/auth?project=homehq-abutt>.
 
 Calendar refresh tokens from the old personal project died with its client,
 so each parent signs in again.
+
+## Play release uploads
+
+`play-publisher@homehq-abutt.iam.gserviceaccount.com` (stack output
+`playPublisherEmail`) uploads releases. Its JSON key is the secret stack
+output `playPublisherKey`:
+
+```sh
+pulumi -C pulumi/homehq stack output playPublisherKey --show-secrets > play-publisher.json
+```
+
+The key lives only in Pulumi state, encrypted with the stack passphrase.
+Put it wherever the release tooling reads it (an agenix secret in the
+task repo, for example), never in git as plain text. To rotate it, run
+`pulumi -C pulumi/homehq up --replace 'urn:pulumi:prod::homehq-gcp::gcp:serviceaccount/key:Key::play-publisher'`.
+
+Once, in the Play Console:
+
+1. **Users and permissions > Invite new users**, email the service
+   account above.
+2. **App permissions > Add app** `dev.abutt.homehq`, with **Release apps
+   to testing tracks** and **Release to production, exclude devices, and
+   use Play App Signing** (leave everything else off).
+3. **Invite user**. Play can take up to a day to honour new access.

@@ -6,6 +6,8 @@
   git-hooks,
   deploy-rs,
   agenix,
+  agenix-shell,
+  system,
 }:
 
 let
@@ -104,6 +106,16 @@ let
   # fetched by Pulumi at the version pinned in pulumi/homehq/go.mod.
   pulumi = pkgs.pulumi.withPackages (p: [ p.pulumi-go ]);
 
+  # Decrypts secrets/*.age at shell entry (recipients in secrets/secrets.nix)
+  # and exports each as an env var. The path is a runtime string: absolute,
+  # built from the repo root without its leading "/", so the shell still
+  # evaluates outside the repo.
+  secretsScript = agenix-shell.lib.installationScript system {
+    secrets = {
+      PULUMI_CONFIG_PASSPHRASE.file = "/$GEMS_SECRETS_REL/pulumi-homehq-passphrase.age";
+    };
+  };
+
   kubeconfig = pkgs.writeShellScriptBin "kubeconfig" ''
     ${pkgs.talosctl}/bin/talosctl kubeconfig \
       --talosconfig talos/gen/talosconfig \
@@ -172,10 +184,10 @@ pkgs.mkShell {
     KANIDM_URL = "https://sso.abutt.dev";
     KANIDM_VERIFY_CA = "true";
 
-    # pulumi/homehq keeps local state in ~/.pulumi and holds no secrets,
-    # so the passphrase is empty. The CLI version is pinned by flake.lock.
+    # pulumi/homehq keeps local state in ~/.pulumi. Its passphrase is set
+    # by the shellHook from secrets/pulumi-homehq-passphrase.age. The CLI
+    # version is pinned by flake.lock.
     PULUMI_BACKEND_URL = "file://~";
-    PULUMI_CONFIG_PASSPHRASE = "";
     PULUMI_SKIP_UPDATE_CHECK = "true";
 
     # Bill API quota to the homehq project instead of whatever project the
@@ -186,8 +198,17 @@ pkgs.mkShell {
     USER_PROJECT_OVERRIDE = "true";
   };
 
+  # Without PULUMI_CONFIG_PASSPHRASE, pulumi refuses to run.
   shellHook = ''
     ${git-hooks.shellHook}
+    root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+    GEMS_SECRETS_REL="''${root#/}/secrets" # agenix-shell wants an absolute path: "/" + this
+    # shellcheck disable=SC1091
+    source ${pkgs.lib.getExe secretsScript}
+    if [ -z "''${PULUMI_CONFIG_PASSPHRASE:-}" ]; then
+      echo "[pulumi] could not decrypt secrets/pulumi-homehq-passphrase.age (is your ssh key a recipient?); pulumi is off" >&2
+    fi
+    unset root GEMS_SECRETS_REL PULUMI_CONFIG_PASSPHRASE_PATH
     menu
   '';
 }

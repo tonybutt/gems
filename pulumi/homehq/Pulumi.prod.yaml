@@ -2,4 +2,4 @@ config:
   gcp:disableGlobalProjectWarning: "true"
   homehq-gcp:orgId: "296757946024"
   homehq-gcp:projectId: homehq-abutt
-encryptionsalt: v1:xsMwCoAFOhM=:v1:Q6c9/F9oDTqxJVul:xxp5DoxB+57meKV4ioYQI+7Owfq9hA==
+encryptionsalt: v1:PeLpc/Wv31c=:v1:HNfnjm7oajSzQ4rl:kILZtau14wRfZpKDKUjwLHNBK2XB9A==

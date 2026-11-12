@@ -11,4 +11,9 @@ in
     atlas
     gem-gpu-0
   ];
+  "pulumi-homehq-passphrase.age".publicKeys = [
+    tiberius
+    lapnix
+    atlas
+  ];
 }

@@ -30,6 +30,14 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    agenix-shell = {
+      url = "github:aciceri/agenix-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs.git-hooks-nix.follows = "git-hooks";
+      inputs.nix-github-actions.follows = "";
+    };
   };
 
   outputs =
@@ -40,6 +48,7 @@
       git-hooks,
       disko,
       agenix,
+      agenix-shell,
       deploy-rs,
     }:
     let
@@ -86,7 +95,13 @@
       };
 
       devShells.${system}.default = import ./nix/shell.nix {
-        inherit pkgs packages nodes;
+        inherit
+          pkgs
+          packages
+          nodes
+          system
+          agenix-shell
+          ;
         git-hooks = pre-commit;
         deploy-rs = deployPkgs.deploy-rs.deploy-rs;
         agenix = agenix.packages.${system}.default;
