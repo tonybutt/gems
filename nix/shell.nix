@@ -92,10 +92,17 @@ let
     echo "    bootstrap-gems            Bootstrap cluster"
     echo "    kubeconfig                Get kubeconfig"
     echo ""
+    echo "  Google Cloud:"
+    echo "    pulumi -C pulumi/homehq   homehq OAuth clients (pulumi/homehq/README.md)"
+    echo ""
     echo "  Formatting:"
     echo "    nix fmt                   Format all files"
     echo ""
   '';
+
+  # The Go language host comes from nixpkgs; the gcp provider plugin is
+  # fetched by Pulumi at the version pinned in pulumi/homehq/go.mod.
+  pulumi = pkgs.pulumi.withPackages (p: [ p.pulumi-go ]);
 
   kubeconfig = pkgs.writeShellScriptBin "kubeconfig" ''
     ${pkgs.talosctl}/bin/talosctl kubeconfig \
@@ -129,6 +136,11 @@ pkgs.mkShell {
 
       # Cloudflare
       cloudflared
+
+      # Google Cloud (homehq OAuth clients in pulumi/homehq)
+      google-cloud-sdk
+      pulumi
+      go
 
       # Identity
       kanidm_1_11

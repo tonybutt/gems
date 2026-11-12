@@ -29,6 +29,7 @@ treefmt-nix.lib.evalModule pkgs {
 
   programs = {
     nixfmt.enable = true;
+    gofumpt.enable = true;
     prettier = {
       enable = true;
       includes = [
