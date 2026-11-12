@@ -1,0 +1,12 @@
+config:
+  gcp:disableGlobalProjectWarning: true
+  homehq-gcp:orgId: "000000000000"
+  homehq-gcp:projectId: homehq-abutt
+  homehq-gcp:releaseSha1Fingerprints:
+    # Upload key, from `nix run .#android-keystore-init` in the task repo.
+    - "AA:BB:..."
+    # Play app-signing key, from Play Console > App integrity.
+    - "CC:DD:..."
+  homehq-gcp:debugSha1Fingerprints:
+    # keytool -list -v -keystore ~/.android/debug.keystore -storepass android
+    - "EE:FF:..."
