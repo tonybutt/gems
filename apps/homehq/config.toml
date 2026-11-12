@@ -11,3 +11,5 @@ format = "json"
 
 [auth]
 cookie_secure = true
+# The Android app requests ID tokens for this Web client; accept them.
+google_native_client_ids = ["475123352619-86n8mfj4vnevoibj8hv0lojhelj9gtnk.apps.googleusercontent.com"]
