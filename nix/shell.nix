@@ -171,6 +171,19 @@ pkgs.mkShell {
     TALOSCONFIG = "talos/gen/talosconfig";
     KANIDM_URL = "https://sso.abutt.dev";
     KANIDM_VERIFY_CA = "true";
+
+    # pulumi/homehq keeps local state in ~/.pulumi and holds no secrets,
+    # so the passphrase is empty. The CLI version is pinned by flake.lock.
+    PULUMI_BACKEND_URL = "file://~";
+    PULUMI_CONFIG_PASSPHRASE = "";
+    PULUMI_SKIP_UPDATE_CHECK = "true";
+
+    # Bill API quota to the homehq project instead of whatever project the
+    # global gcloud config or ADC file names, without touching either.
+    CLOUDSDK_CORE_PROJECT = "homehq-abutt";
+    GOOGLE_CLOUD_QUOTA_PROJECT = "homehq-abutt";
+    GOOGLE_BILLING_PROJECT = "homehq-abutt";
+    USER_PROJECT_OVERRIDE = "true";
   };
 
   shellHook = ''
