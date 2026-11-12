@@ -18,7 +18,15 @@
     hostnames: [
       "homehq.abutt.dev",
     ],
+    # Only the client API goes through the gateway; /healthz, /readyz and
+    # /metrics stay reachable inside the cluster only (probes hit the pod).
     rules: [{
+      matches: [{
+        path: {
+          type: "PathPrefix",
+          value: "/api",
+        },
+      }],
       backendRefs: [{
         name: "homehq-api",
         port: 80,
