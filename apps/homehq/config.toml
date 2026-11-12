@@ -1,5 +1,6 @@
 [server]
 listen_addr = "0.0.0.0:3000"
+trust_cf_connecting_ip = true
 
 [database]
 url = "sqlite:/data/task.db"
